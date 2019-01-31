@@ -1,6 +1,5 @@
 CXXFLAGS=-Wall -O3 -g
-OBJECTS=ProjectDMD.o
-BINARIES=ProjectDMD
+OBJECTS= ProjectDMD.o PanelManager.o PanelSource.o
 
 RGB_LIB_DISTRIBUTION=lib/rpi-rgb-led-matrix
 RGB_INCDIR=$(RGB_LIB_DISTRIBUTION)/include
@@ -11,11 +10,17 @@ LDFLAGS+=-L$(RGB_LIBDIR) -l$(RGB_LIBRARY_NAME) -lrt -lm -lpthread
 
 all: ProjectDMD
 
-ProjectDMD : $(OBJECTS) $(RGB_LIBRARY)
+ProjectDMD: ProjectDMD.o $(RGB_LIBRARY) PanelManager
 	$(CXX) $(CXXFLAGS) $(OBJECTS) -o $@ $(LDFLAGS)
 
- $(RGB_LIBRARY):
+$(RGB_LIBRARY):
 	$(MAKE) -C $(RGB_LIBDIR)
 
+PanelManager: src/PanelManager.cpp include/PanelManager.h PanelSource
+	$(CXX) -c $(CXXFLAGS) src/PanelManager.cpp
+
+PanelSource: src/PanelSource.cpp include/PanelSource.h include/libraries.h
+	$(CXX) -c $(CXXFLAGS) src/PanelSource.cpp
+
 clean:
-	rm -f $(OBJECTS) $(BINARIES)
+	rm -f ProjectDMD.o PanelManager.o PanelSource.o ProjectDMD
