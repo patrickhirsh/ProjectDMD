@@ -1,4 +1,4 @@
-#include "include/PanelManager.h"
+#include "../include/PanelManager.h"
 
 int main(int argc, char* argv[])
 {
