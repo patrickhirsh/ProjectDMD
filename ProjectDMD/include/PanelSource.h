@@ -20,8 +20,8 @@ class Clock : public PanelSource
         Color color;
         const char* time_format;
         char text_buffer[256];
-        struct timespec next_time;
         struct tm tm;
+        time_t* t;
 
     public: 
         void Start(Canvas *canvas);

@@ -34,7 +34,7 @@ int PanelManager::Run(int argc, char* argv[])
     while(!interrupt_received)
     {
         clockSource.Update(canvas);
-        usleep(3000);
+        usleep(1000000);
     }
 
     // shutdown
