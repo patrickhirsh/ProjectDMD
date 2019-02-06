@@ -1,3 +1,4 @@
+#pragma once
 #include "libraries.h"
 
 using namespace rgb_matrix;

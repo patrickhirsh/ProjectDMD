@@ -1,3 +1,4 @@
+#include "../include/libraries.h"
 #include "../include/PanelManager.h"
 
 volatile bool interrupt_received = false;

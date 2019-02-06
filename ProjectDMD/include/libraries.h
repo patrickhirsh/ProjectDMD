@@ -1,3 +1,4 @@
+#pragma once
 #include "../lib/rpi-rgb-led-matrix/include/led-matrix.h"
 #include "../lib/rpi-rgb-led-matrix/include/threaded-canvas-manipulator.h"
 #include "../lib/rpi-rgb-led-matrix/include/pixel-mapper.h"

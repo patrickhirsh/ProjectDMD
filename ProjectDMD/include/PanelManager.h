@@ -1,3 +1,4 @@
+#pragma once
 #include "PanelSource.h"
 
 class PanelManager
