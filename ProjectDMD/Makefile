@@ -1,5 +1,5 @@
 CXXFLAGS=-Wall -O3 -g
-OBJECTS= ProjectDMD.o PanelManager.o PanelSource.o
+OBJECTS= ProjectDMD.o PanelManager.o Clock.o
 
 RGB_LIB_DISTRIBUTION=lib/rpi-rgb-led-matrix
 RGB_INCDIR=$(RGB_LIB_DISTRIBUTION)/include
@@ -17,11 +17,11 @@ $(RGB_LIBRARY):
 ProjectDMD: src/ProjectDMD.cpp PanelManager
 	$(CXX) -c $(CXXFLAGS) src/ProjectDMD.cpp
 
-PanelManager: src/PanelManager.cpp include/PanelManager.h PanelSource
+PanelManager: src/PanelManager.cpp include/PanelManager.h Clock
 	$(CXX) -c $(CXXFLAGS) src/PanelManager.cpp
 
-PanelSource: src/PanelSource.cpp include/PanelSource.h include/libraries.h
-	$(CXX) -c $(CXXFLAGS) src/PanelSource.cpp
+Clock: src/sources/Clock.cpp include/PanelSource.h include/libraries.h
+	$(CXX) -c $(CXXFLAGS) src/sources/Clock.cpp
 
 clean:
 	rm -f $(OBJECTS) ProjectDMD

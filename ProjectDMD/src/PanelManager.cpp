@@ -1,5 +1,6 @@
 #include "../include/libraries.h"
 #include "../include/PanelManager.h"
+#include "../include/PanelSource.h"
 
 volatile bool interrupt_received = false;
 static void InterruptHandler(int signo) {
@@ -26,11 +27,14 @@ int PanelManager::Run(int argc, char* argv[])
     Canvas* canvas = rgb_matrix::CreateMatrixFromFlags(&argc, &argv, &defaults);
     if (canvas == NULL) { return 1; }
     
-    Demo demoSource;
+    Clock clockSource;
+
+    clockSource.Start(canvas);
 
     while(!interrupt_received)
     {
-        demoSource.Update(canvas);
+        clockSource.Update(canvas);
+        usleep(3000);
     }
 
     // shutdown
