@@ -1,4 +1,3 @@
-#include "../include/libraries.h"
 #include "../include/PanelManager.h"
 #include "../include/PanelSource.h"
 #include "../include/ResourceManager.h"

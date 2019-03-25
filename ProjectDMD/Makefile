@@ -9,9 +9,10 @@ CXXFLAGS = -Wall -O3 -g
 HDR = $(wildcard include/*.h)
 SRC_BASE = $(wildcard src/*.cpp)
 SRC_RESOURCE = $(wildcard src/resource/*.cpp)
-SRC_SOURCES = $(wildcard src/sources/*.cpp)
+SRC_SOURCES = $(wildcard src/source/*.cpp)
 SRC_UTILITY = $(wildcard src/utility/*.cpp)
-SRC = $(SRC_BASE) $(SRC_SOURCES) $(SRC_UTILITY) $(SRC_RESOURCE)
+SRC_OBJECT = $(wildcard src/object/*.cpp)
+SRC = $(SRC_BASE) $(SRC_SOURCES) $(SRC_UTILITY) $(SRC_RESOURCE) $(SRC_OBJECT)
 TMP := $(subst src/,obj/,$(SRC))
 OBJ := $(subst .cpp,.o,$(TMP))
 

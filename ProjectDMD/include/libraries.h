@@ -3,6 +3,7 @@
 #include "../lib/rpi-rgb-led-matrix/include/threaded-canvas-manipulator.h"
 #include "../lib/rpi-rgb-led-matrix/include/pixel-mapper.h"
 #include "../lib/rpi-rgb-led-matrix/include/graphics.h"
+#include "Error.h"
 #include <assert.h>
 #include <getopt.h>
 #include <limits.h>

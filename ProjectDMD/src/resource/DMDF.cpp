@@ -19,11 +19,7 @@ DMDF::DMDF(std::string file)
     std::ifstream source;
     source.exceptions ( std::ifstream::failbit | std::ifstream::badbit );
     try { source.open(file); }
-    catch (std::ifstream::failure e)
-    {
-        printf("Error opening file %s :", file.c_str());
-        printf(std::strerror(errno));
-    }
+    catch (std::ifstream::failure e) { LogError("DMDF", "Error opening " + file + " : " + std::strerror(errno)); }    
     if (!source.is_open()) { this->_loaded = false; }       
     else { this->_loaded = true; }
 

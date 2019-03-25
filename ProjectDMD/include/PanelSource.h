@@ -1,5 +1,5 @@
 #pragma once
-#include "libraries.h"
+#include "Libraries.h"
 
 using namespace rgb_matrix;
 
