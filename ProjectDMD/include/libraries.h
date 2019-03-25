@@ -11,6 +11,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <cstring>
 #include <unistd.h>
 #include <algorithm>
 #include <time.h>
+#include <vector>
+#include <iostream>
+#include <fstream>
