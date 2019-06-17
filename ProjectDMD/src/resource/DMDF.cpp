@@ -1,9 +1,5 @@
 #include "../../include/DMDF.h"
 
-DMDF::DMDF()
-{
-    this->_loaded = false;
-}
 
 DMDF::DMDF(std::string file)
 {
@@ -18,54 +14,60 @@ DMDF::DMDF(std::string file)
     // check file validity
     std::ifstream source;
     source.exceptions ( std::ifstream::failbit | std::ifstream::badbit );
-    try { source.open(file); }
-    catch (std::ifstream::failure e) { LogError("DMDF", "Error opening " + file + " : " + std::strerror(errno)); }    
+    try { source.open(file.c_str()); }
+    catch (std::ifstream::failure e) { LogError("DMDF", "Error opening " + file + " : " + std::strerror(errno)); }
+
     if (!source.is_open()) { this->_loaded = false; }       
     else { this->_loaded = true; }
+				if (this->_loaded)
+				{
+								// get end position and reserve buffer
+								source.seekg(0, source.end);
+								size_t length = source.tellg();
+								source.seekg(0, source.beg);
+								std::vector<char> buffer(length);
 
-    if (this->_loaded)
-    {
-        // get end position and reserve buffer
-        source.seekg(0, source.end);
-        size_t length = source.tellg();
-        source.seekg(0, source.beg);    
-        std::vector<char> buffer(length);
-        
-        // read into buffer
-        source.read(&buffer[0], length);
-        uint bufferIndex = 0;
+								// read into buffer
+								source.read(&buffer[0], length);
+								unsigned int bufferIndex = 0;
 
-        // initialize font data
-        this->_characters = new std::map<char, std::vector<std::vector<unsigned char>>*>();
-        this->_fontDimensions = std::tuple<int, int>(buffer[bufferIndex + 1], buffer[bufferIndex + 2]);
+								// initialize font data
+								this->_characters = new std::map<char, std::vector<std::vector<unsigned char>>*>();
+								this->_fontDimensions = std::tuple<int, int>(buffer[bufferIndex + 1], buffer[bufferIndex + 2]);
 
-        // read and store all characters
-        while(bufferIndex < length)
-        {           
-            // read header
-            char character = buffer[bufferIndex];         
-            std::tuple<int, int> dimensions(buffer[bufferIndex + 1], buffer[bufferIndex + 2]);
-            bufferIndex += 3;
+								// read and store all characters
+								while (bufferIndex < length)
+								{
+												// read header
+												char character = buffer[bufferIndex];
+												std::tuple<int, int> dimensions(buffer[bufferIndex + 1], buffer[bufferIndex + 2]);
+												bufferIndex += 3;
 
-            // initialize payload vector
-            std::vector<std::vector<unsigned char>>* payload = new std::vector<std::vector<unsigned char>>(
-                std::get<1>(dimensions), std::vector<unsigned char>(std::get<0>(dimensions), 0));
+												// initialize payload vector
+												std::vector<std::vector<unsigned char>>* payload = new std::vector<std::vector<unsigned char>>(
+																std::get<1>(dimensions), std::vector<unsigned char>(std::get<0>(dimensions), 255));
 
-            // read payload
-            for (int row = 0; row < std::get<1>(dimensions); row++)
-                for (int col = 0; col < std::get<0>(dimensions); col++)
-                {
-                    (*payload)[row][col] = buffer[bufferIndex];
-                    bufferIndex++;
-                }
-            (*this->_characters)[character] = payload;       
-        }
-    }
+												// read payload
+												for (int row = 0; row < std::get<1>(dimensions); row++)
+																for (int col = 0; col < std::get<0>(dimensions); col++)
+																{
+																				(*payload)[row][col] = buffer[bufferIndex];
+																				bufferIndex++;
+																}
+												(*this->_characters)[character] = payload;
+								}
+				}
+				source.close();
 }
 
 std::vector<std::vector<unsigned char>>* DMDF::GetCharacter(char c)
 {
-    if ((this->_loaded) && ((*this->_characters).find(c) != (*this->_characters).end())) { return (*this->_characters)[c]; }       
+    if ((this->_loaded) && 
+								((*this->_characters).find(c) != (*this->_characters).end())) 
+				{ 
+								printf("character found!\n");
+								return (*this->_characters)[c]; 
+				}       
     else { return NULL; }     
 }
 

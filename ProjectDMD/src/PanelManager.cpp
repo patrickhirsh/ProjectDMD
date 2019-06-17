@@ -3,7 +3,8 @@
 #include "../include/ResourceManager.h"
 
 volatile bool interrupt_received = false;
-static void InterruptHandler(int signo) {
+static void InterruptHandler(int signo) 
+{
     interrupt_received = true;
 }
 
@@ -26,9 +27,9 @@ int PanelManager::Run(int argc, char* argv[])
     // create the canvas
     Canvas* canvas = rgb_matrix::CreateMatrixFromFlags(&argc, &argv, &defaults);
     if (canvas == NULL) { return 1; }
-    
-    // load resources
-    ResourceManager::LoadFonts("../resources/fonts/dmdf");
+
+    // initialize resources
+				ResourceManager::InitializeResources();
 
     // initialize sources
     Clock clockSource;
@@ -37,7 +38,7 @@ int PanelManager::Run(int argc, char* argv[])
     while(!interrupt_received)
     {
         // clear canvas each frame update
-        canvas->Fill(0, 0, 0);
+        canvas->Clear();
 
         // update sources...
         clockSource.Update(canvas);

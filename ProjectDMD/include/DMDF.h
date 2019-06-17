@@ -4,7 +4,6 @@
 class DMDF
 {
     public:
-        DMDF();
         DMDF(std::string file);
         std::vector<std::vector<unsigned char>>* GetCharacter(char c);
         std::tuple<int, int> GetDimensions();
