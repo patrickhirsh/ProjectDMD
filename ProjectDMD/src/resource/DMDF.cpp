@@ -1,5 +1,18 @@
 #include "../../include/DMDF.h"
 
+////////////////////////////////////////////////////////////////////////////////
+// DMDFC
+
+DMDFC::DMDFC(char character, std::tuple<int, int> dimmensions, std::vector<std::vector<unsigned char>>* raster)
+{
+				Character = character;
+				CharacterDimensions = dimmensions;
+				CharacterRaster = raster;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// DMDF
 
 DMDF::DMDF(std::string file)
 {
@@ -32,8 +45,8 @@ DMDF::DMDF(std::string file)
 								unsigned int bufferIndex = 0;
 
 								// initialize font data
-								this->_characters = new std::map<char, std::vector<std::vector<unsigned char>>*>();
-								this->_fontDimensions = std::tuple<int, int>(buffer[bufferIndex + 1], buffer[bufferIndex + 2]);
+								this->_characters = new std::map<char, DMDFC*>();
+								this->_fontHeight = buffer[bufferIndex + 2];
 
 								// read and store all characters
 								while (bufferIndex < length)
@@ -43,50 +56,64 @@ DMDF::DMDF(std::string file)
 												std::tuple<int, int> dimensions(buffer[bufferIndex + 1], buffer[bufferIndex + 2]);
 												bufferIndex += 3;
 
+												// ensure raster height uniformity
+												if (std::get<1>(dimensions) != this->_fontHeight)
+												{
+																this->_loaded = false;
+																LogError("DMDF", "Font " + _fontName + " contains non-uniform raster heights");
+																return;
+												}
+
 												// initialize payload vector
 												std::vector<std::vector<unsigned char>>* payload = new std::vector<std::vector<unsigned char>>(
-																std::get<1>(dimensions), std::vector<unsigned char>(std::get<0>(dimensions), 255));
+																std::get<0>(dimensions), std::vector<unsigned char>(std::get<1>(dimensions), -99));
 
 												// read payload
 												for (int row = 0; row < std::get<1>(dimensions); row++)
 																for (int col = 0; col < std::get<0>(dimensions); col++)
 																{
-																				(*payload)[row][col] = buffer[bufferIndex];
+																				(*payload)[col][row] = buffer[bufferIndex];
 																				bufferIndex++;
 																}
-												(*this->_characters)[character] = payload;
+
+												// create an store the new DMDFC
+												DMDFC* newDMDFC = new DMDFC(character, dimensions, payload);
+												(*this->_characters)[character] = newDMDFC;
 								}
 				}
 				source.close();
 }
 
-std::vector<std::vector<unsigned char>>* DMDF::GetCharacter(char c)
+DMDFC* DMDF::GetCharacter(const char c)
 {
-    if ((this->_loaded) && 
-								((*this->_characters).find(c) != (*this->_characters).end())) 
-				{ 
-								printf("character found!\n");
-								return (*this->_characters)[c]; 
-				}       
-    else { return NULL; }     
-}
-
-std::tuple<int, int> DMDF::GetDimensions()
-{
-    return this->_fontDimensions;
+				if (_loaded)
+				{
+								auto iter = (*this->_characters).find(c);
+								if (iter != (*this->_characters).end())
+								{
+												return iter->second;
+								}
+								return NULL;
+				} 
+				LogError("DMDF", "Tried to access a font that hasn't been loaded");
+				return NULL;
 }
 
 std::string DMDF::GetName()
 {
-    return this->_fontName;
-}
-
-bool DMDF::IsLoaded()
-{
-    return this->_loaded;
+				if (_loaded) { return this->_fontName; }
+				LogError("DMDF", "Tried to access a font that hasn't been loaded");
+				return "NOT_LOADED";
 }
 
 int DMDF::GetCount()
 {
-    return (*this->_characters).size();
+				if (_loaded) { return (*this->_characters).size(); }
+				LogError("DMDF", "Tried to access a font that hasn't been loaded");
+				return 0;
+}
+
+bool DMDF::IsLoaded()
+{
+				return this->_loaded;
 }

@@ -22,9 +22,9 @@ void Clock::Restart()
 
 void Clock::Update(Canvas* canvas)
 {
-    //time(t);
-    //localtime_r(t, &tm);
-    //strftime(text_buffer, sizeof(text_buffer), time_format, &tm);
+    time(t);
+    localtime_r(t, &tm);
+    strftime(text_buffer, sizeof(text_buffer), time_format, &tm);
     //rgb_matrix::DrawText(canvas, font, 64 - 55, 6 + font.baseline(), color, NULL, text_buffer);
-				Render::Text(canvas, "HELLO", ResourceManager::GetSystemFont(), std::tuple<int, int>(3, 3), *ResourceManager::GetSystemColorPalette()->GetColor(15));
+				Render::Text(canvas, text_buffer, ResourceManager::GetSystemFont(), std::tuple<int, int>(3, 3), *ResourceManager::GetSystemColorPalette()->GetColor(15));
 }

@@ -3,21 +3,23 @@
 void Render::Text(rgb_matrix::Canvas* canvas, std::string text, DMDF* font, std::tuple<int, int> origin, rgb_matrix::Color color, TextJustification justification, int horizontalSpacing)
 {
 				std::tuple<int, int> currentRenderOrigin = origin;
-				std::tuple<int, int> fontDimensions = font->GetDimensions();
 				DMDColorPalette colorPalette(color);
 
-				for (char character : text)
+				for (char& character : text)
 				{
-								// validate character
-								std::vector<std::vector<unsigned char>>* characterRaster = font->GetCharacter(character);
-								bool validCharacter = characterRaster == NULL ? false : true;
+								// get DMDFC
+								DMDFC* characterDMDFC = font->GetCharacter(character);	
 
-								// draw character
-								if (validCharacter)
+								if (characterDMDFC != NULL)
 								{
-												for (int row = 0; row < std::get<1>(fontDimensions); row++)
+												// if DMDFC is valid, get DMDFC data
+												std::tuple<int, int> characterDimensions = characterDMDFC->CharacterDimensions;
+												std::vector<std::vector<unsigned char>>* characterRaster = characterDMDFC->CharacterRaster;
+
+												// render character
+												for (int row = 0; row < std::get<1>(characterDimensions); row++)
 												{
-																for (int col = 0; col < std::get<0>(fontDimensions); col++)
+																for (int col = 0; col < std::get<0>(characterDimensions); col++)
 																{
 																				// don't render transparent pixels
 																				if ((*characterRaster)[col][row] != 255)
@@ -25,20 +27,22 @@ void Render::Text(rgb_matrix::Canvas* canvas, std::string text, DMDF* font, std:
 																								rgb_matrix::Color* renderColor = colorPalette.GetColor((*characterRaster)[col][row]);
 																								if (renderColor != NULL) 
 																								{ 
-																												canvas->SetPixel(col + std::get<0>(currentRenderOrigin), row + std::get<1>(currentRenderOrigin), 
+																												canvas->SetPixel(std::get<0>(currentRenderOrigin) + col, std::get<1>(currentRenderOrigin) + row, 
 																																renderColor->r, renderColor->g, renderColor->b); 
 																								}
 																				}
 																}
 												}
+												// move current render position
+												std::get<0>(currentRenderOrigin) += std::get<0>(characterDimensions);
 								}
 								else
 								{
-												// TODO: Do something if the character is invalid...
+												// TODO: Do something if the character is invalid... (for now, move render position by 5..)
+												std::get<0>(currentRenderOrigin) += 5;
 								}			
-
-								// move current render position
-								std::get<0>(currentRenderOrigin) = std::get<0>(currentRenderOrigin) + std::get<0>(fontDimensions) + horizontalSpacing;
+								// add horizontal spacing between characters
+								std::get<0>(currentRenderOrigin) += horizontalSpacing;				
 				}
 }
 
@@ -53,12 +57,24 @@ std::tuple<int, int> Render::getOriginAfterJustification(std::string text, DMDF*
 												break;
 
 								case TextJustification::Center:
-												totalWidth = text.length() * (std::get<0>(font->GetDimensions())) + (text.length() - 1)*horizontalSpacing;
+												for (char& character : text)
+												{
+																DMDFC* characterDMDFC = font->GetCharacter(character);
+																if (characterDMDFC != NULL) { totalWidth += std::get<0>(characterDMDFC->CharacterDimensions); }
+																else { totalWidth += 5; }
+												}
+												totalWidth += (text.length() - 1)*horizontalSpacing;
 												return std::tuple<int, int>(std::get<0>(origin) - totalWidth / 2, std::get<1>(origin));
 												break;
 
 								case TextJustification::Right:
-												totalWidth = text.length() * (std::get<0>(font->GetDimensions())) + (text.length() - 1)*horizontalSpacing;
+												for (char& character : text)
+												{
+																DMDFC* characterDMDFC = font->GetCharacter(character);
+																if (characterDMDFC != NULL) { totalWidth += std::get<0>(characterDMDFC->CharacterDimensions); }
+																else { totalWidth += 5; }
+												}
+												totalWidth += (text.length() - 1)*horizontalSpacing;
 												return std::tuple<int, int>(std::get<0>(origin) - totalWidth, std::get<1>(origin));
 												break;
 

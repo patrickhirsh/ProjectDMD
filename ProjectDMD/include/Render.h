@@ -20,7 +20,7 @@ class Render
 												std::tuple<int, int>				origin,
 												rgb_matrix::Color							color,
 												TextJustification							justification = TextJustification::Left,
-												int																					horizontalSpacing = 2);
+												int																					horizontalSpacing = 0);
 
 				private:
 								static std::tuple<int, int> getOriginAfterJustification(
