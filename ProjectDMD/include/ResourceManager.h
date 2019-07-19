@@ -50,21 +50,21 @@ class DMDColorPalette;
 
 class ResourceManager
 {
-				public:					
-								static void Initialize																										();
-								static DMDF* GetFont																												(std::string fontName);
-								
-								static void SetSystemColorPalette															(rgb_matrix::Color color);
-								static bool SetSystemFont																							(std::string fontName);		
-								static DMDColorPalette* GetSystemColorPalette			();
-								static DMDF* GetSystemFont																						();
+public:
+    static void Initialize();
+    static DMDF* GetFont(std::string fontName);
 
-    private:
-								/* System Globals */
-								static DMDColorPalette*																									_systemColorPalette;
-								static DMDF*																																				_systemFont;
+    static void SetSystemColorPalette(rgb_matrix::Color color);
+    static bool SetSystemFont(std::string fontName);
+    static DMDColorPalette* GetSystemColorPalette();
+    static DMDF* GetSystemFont();
 
-        static std::map<std::string, DMDF*>*												_fonts;    
+private:
+    /* System Globals */
+    static DMDColorPalette*																									_systemColorPalette;
+    static DMDF*																																				_systemFont;
+
+    static std::map<std::string, DMDF*>*												_fonts;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -76,28 +76,28 @@ class ResourceManager
 class DMDF
 {
 public:
-				DMDF(std::string file);
-				DMDFC* GetCharacter(const char c);
-				std::string GetName();
-				int GetCount();
-				int GetFontHeight();
-				bool IsLoaded();
+    DMDF(std::string file);
+    DMDFC* GetCharacter(const char c);
+    std::string GetName();
+    int GetCount();
+    int GetFontHeight();
+    bool IsLoaded();
 
 private:
-				bool _loaded;
-				std::map<char, DMDFC*>*					_characters;
-				int																									_fontHeight;
-				std::string																	_fontName;
+    bool _loaded;
+    std::map<char, DMDFC*>*					_characters;
+    int																									_fontHeight;
+    std::string																	_fontName;
 };
 
 class DMDFC
 {
 public:
-				DMDFC(char character, std::tuple<int, int> dimmensions, std::vector<std::vector<unsigned char>>* raster);
+    DMDFC(char character, std::tuple<int, int> dimmensions, std::vector<std::vector<unsigned char>>* raster);
 
-				char																																								Character;														// Character that this DMDFC represents
-				std::tuple<int, int>																								CharacterDimensions;				// (width, height)
-				std::vector<std::vector<unsigned char>>*				CharacterRaster;								// (right to left, top to bottom)
+    char																																								Character;														// Character that this DMDFC represents
+    std::tuple<int, int>																								CharacterDimensions;				// (width, height)
+    std::vector<std::vector<unsigned char>>*				CharacterRaster;								// (right to left, top to bottom)
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -117,16 +117,16 @@ Classes utilizing color palettes should check for values of 255 and skip drawing
 class DMDColorPalette
 {
 public:
-				DMDColorPalette(rgb_matrix::Color color);
-				~DMDColorPalette();
-				rgb_matrix::Color* GetColor(unsigned char sternValue);
+    DMDColorPalette(rgb_matrix::Color color);
+    ~DMDColorPalette();
+    rgb_matrix::Color* GetColor(unsigned char sternValue);
 
 private:
-				static std::map<unsigned char, float>* _sternPixelMap;
-				static float getBrightnessFromSternValue(unsigned char sternValue);
+    static std::map<unsigned char, float>* _sternPixelMap;
+    static float getBrightnessFromSternValue(unsigned char sternValue);
 
-				/* stores mappings from stern values (255 and 0-15) to Colors based on this DMDColorPalette*/
-				std::map<unsigned char, rgb_matrix::Color*> _colorMapping;
+    /* stores mappings from stern values (255 and 0-15) to Colors based on this DMDColorPalette*/
+    std::map<unsigned char, rgb_matrix::Color*> _colorMapping;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

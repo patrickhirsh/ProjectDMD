@@ -36,36 +36,36 @@
 
 using namespace rgb_matrix;
 
-enum TextJustification 
+enum TextJustification
 {
-				Left,
-				Center,
-				Right
+    Left,
+    Center,
+    Right
 };
 
 class Render
 {
 public:
-				static float																GlobalBrightness;
-				static void																	Initialize(int argc, char* argv[]);
-				static bool																	IsCanvasValid() { return _canvas ? true : false; }
-				static void																	Clear() { _canvas->Clear(); }
+    static float																GlobalBrightness;
+    static void																	Initialize(int argc, char* argv[]);
+    static bool																	IsCanvasValid() { return _canvas ? true : false; }
+    static void																	Clear() { _canvas->Clear(); }
 
-				static void Text(
-								std::string													text,
-								DMDF*																			font,
-								std::tuple<int, int>				origin,
-								rgb_matrix::Color							color,
-								TextJustification							justification = TextJustification::Left,
-								int																					horizontalSpacing = 0);
+    static void Text(
+        std::string													text,
+        DMDF*																			font,
+        std::tuple<int, int>				origin,
+        rgb_matrix::Color							color,
+        TextJustification							justification = TextJustification::Left,
+        int																					horizontalSpacing = 0);
 
 private:
-				static Canvas*														_canvas;
+    static Canvas*														_canvas;
 
-				static std::tuple<int, int> getOriginAfterJustification(
-								std::string													text, 
-								DMDF*																			font, 
-								std::tuple<int, int>				origin, 
-								int																					horizontalSpacing, 
-								TextJustification							justification);
+    static std::tuple<int, int> getOriginAfterJustification(
+        std::string													text,
+        DMDF*																			font,
+        std::tuple<int, int>				origin,
+        int																					horizontalSpacing,
+        TextJustification							justification);
 };

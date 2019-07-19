@@ -34,9 +34,9 @@
 
 class PanelSource
 {
-    public:
-        virtual void Reset() = 0;
-        virtual void Update() = 0;   
+public:
+    virtual void Reset() = 0;
+    virtual void Update() = 0;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -47,19 +47,19 @@ class PanelSource
 
 class Clock : public PanelSource
 {
-				public:
-								Clock();
-								~Clock();
-								void Reset();
-								void Update();
+public:
+    Clock();
+    ~Clock();
+    void Reset();
+    void Update();
 
-    private:
-        Font font;
-        Color color;
-        const char* time_format;
-        char text_buffer[256];
-        struct tm tm;
-        time_t* t;
+private:
+    Font font;
+    Color color;
+    const char* time_format;
+    char text_buffer[256];
+    struct tm tm;
+    time_t* t;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

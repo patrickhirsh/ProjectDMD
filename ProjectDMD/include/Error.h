@@ -28,13 +28,13 @@
 class ErrorHandler
 {
 public:
-				static void					FatalError(std::string source, std::string reason);
-				static void					LogError(std::string source, std::string reason);
-				static void					LogWarning(std::string source, std::string reason);
-				static int						GetErrorCount() { return _errorCount; }
-				static int						GetWarningCount() { return _warningCount; }
+    static void					FatalError(std::string source, std::string reason);
+    static void					LogError(std::string source, std::string reason);
+    static void					LogWarning(std::string source, std::string reason);
+    static int						GetErrorCount() { return _errorCount; }
+    static int						GetWarningCount() { return _warningCount; }
 
 private:
-				static int						_errorCount;
-				static int						_warningCount;
+    static int						_errorCount;
+    static int						_warningCount;
 };

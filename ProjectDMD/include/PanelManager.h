@@ -42,6 +42,6 @@
 
 class PanelManager
 {
-    public:
-        static int Run(int argc, char *argv[]);
+public:
+    static int Run(int argc, char *argv[]);
 };

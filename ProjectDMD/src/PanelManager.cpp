@@ -10,33 +10,33 @@
 volatile bool interrupt_received = false;
 static void InterruptHandler(int signo)
 {
-				interrupt_received = true;
+    interrupt_received = true;
 }
 
 
 int PanelManager::Run(int argc, char* argv[])
 {
 #if !__linux__
-				ErrorHandler::FatalError("ProjectDMD", "Unsupported operating system detected (expected linux)");
+    ErrorHandler::FatalError("ProjectDMD", "Unsupported operating system detected (expected linux)");
 #endif
 
     printf("\n\nrunning...\n\n");
 
-				// listen for interupts
-				signal(SIGTERM, InterruptHandler);
-				signal(SIGINT, InterruptHandler);
+    // listen for interupts
+    signal(SIGTERM, InterruptHandler);
+    signal(SIGINT, InterruptHandler);
 
     // system init
-				Render::Initialize(argc, argv);
-				ResourceManager::Initialize();
+    Render::Initialize(argc, argv);
+    ResourceManager::Initialize();
 
     // source init
     Clock clockSource;
 
-				Render::GlobalBrightness = 0.2f;
+    Render::GlobalBrightness = 0.2f;
 
-				// panel refresh loop
-    while(!interrupt_received)
+    // panel refresh loop
+    while (!interrupt_received)
     {
         // clear canvas each frame update
         Render::Clear();

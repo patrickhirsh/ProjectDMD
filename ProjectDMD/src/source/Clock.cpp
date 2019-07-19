@@ -10,23 +10,23 @@
 
 Clock::Clock()
 {
-				Color testColor(255, 0, 0);
-				this->time_format = "%r";
-				this->color = testColor;
-				this->t = (time_t*)malloc(sizeof(time_t));
+    Color testColor(255, 0, 0);
+    this->time_format = "%r";
+    this->color = testColor;
+    this->t = (time_t*)malloc(sizeof(time_t));
 }
 
 Clock::~Clock()
 {
-				delete t;
+    delete t;
 }
 
-void Clock::Reset() 
-{ 
-				Color testColor(255, 0, 0);
-				this->time_format = "%r";
-				this->color = testColor;
-				this->t = (time_t*)malloc(sizeof(time_t));
+void Clock::Reset()
+{
+    Color testColor(255, 0, 0);
+    this->time_format = "%r";
+    this->color = testColor;
+    this->t = (time_t*)malloc(sizeof(time_t));
 }
 
 void Clock::Update()
@@ -36,8 +36,8 @@ void Clock::Update()
     localtime_r(t, &tm);
     strftime(text_buffer, sizeof(text_buffer), time_format, &tm);
 #endif
-				Render::Text(text_buffer, ResourceManager::GetFont("StarTrek_20.dmdf"), std::tuple<int, int>(3, 3), 
-								*ResourceManager::GetSystemColorPalette()->GetColor(15), TextJustification::Left, 0);
+    Render::Text(text_buffer, ResourceManager::GetFont("StarTrek_20.dmdf"), std::tuple<int, int>(3, 3),
+        *ResourceManager::GetSystemColorPalette()->GetColor(15), TextJustification::Left, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
