@@ -1,3 +1,7 @@
+////////////////////////////////////////////////////////////////////////////////
+/* ProjectDMD Written by: Patrick Hirsh, 2019 */
+////////////////////////////////////////////////////////////////////////////////
+
 #pragma once
 #include <assert.h>
 #include <errno.h>
@@ -17,6 +21,9 @@
 #include <locale>
 #include <map>
 #include <vector>
+
+// Local
+#include "../SYSTEMGLOBALS.h"
 
 class ErrorHandler
 {

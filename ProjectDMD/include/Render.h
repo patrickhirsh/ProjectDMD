@@ -1,3 +1,7 @@
+////////////////////////////////////////////////////////////////////////////////
+/* ProjectDMD Written by: Patrick Hirsh, 2019 */
+////////////////////////////////////////////////////////////////////////////////
+
 #pragma once
 #include <assert.h>
 #include <errno.h>
@@ -26,6 +30,7 @@
 #include "../lib/rpi-rgb-led-matrix/include/graphics.h"
 
 // Local
+#include "../SYSTEMGLOBALS.h"
 #include "Error.h"
 #include "ResourceManager.h"
 

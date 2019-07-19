@@ -1,3 +1,7 @@
+////////////////////////////////////////////////////////////////////////////////
+/* ProjectDMD Written by: Patrick Hirsh, 2019 */
+////////////////////////////////////////////////////////////////////////////////
+
 #pragma once
 #include <assert.h>
 #include <errno.h>
@@ -19,6 +23,7 @@
 #include <vector>
 
 // Local
+#include "../SYSTEMGLOBALS.h"
 #include "Error.h"
 #include "Render.h"
 #include "ResourceManager.h"

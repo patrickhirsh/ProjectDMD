@@ -1,3 +1,7 @@
+////////////////////////////////////////////////////////////////////////////////
+/* ProjectDMD Written by: Patrick Hirsh, 2019 */
+////////////////////////////////////////////////////////////////////////////////
+
 #include "../../include/Render.h"
 
 /* Statics */
@@ -14,9 +18,9 @@ void Render::Initialize(int argc, char* argv[])
 				// define matrix options
 				RGBMatrix::Options defaults;
 				defaults.hardware_mapping = "adafruit-hat";
-				defaults.rows = 32;
-				defaults.cols = 64;
-				defaults.chain_length = 2;
+				defaults.rows = PANEL_HEIGHT;
+				defaults.cols = PANEL_WIDTH;
+				defaults.chain_length = PANEL_COUNT_X;
 				defaults.show_refresh_rate = false;
 
 				// create the canvas

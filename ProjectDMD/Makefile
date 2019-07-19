@@ -6,7 +6,7 @@
 CXXFLAGS = -Wall -O3 -g
 
 # Project Files
-HDR = $(wildcard include/*.h)
+HDR = $(wildcard include/*.h) SYSTEMGLOBALS.h
 SRC_BASE = $(wildcard src/*.cpp)
 SRC_RESOURCE = $(wildcard src/resource/*.cpp)
 SRC_SOURCES = $(wildcard src/source/*.cpp)

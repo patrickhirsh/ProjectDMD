@@ -1,3 +1,7 @@
+////////////////////////////////////////////////////////////////////////////////
+/* ProjectDMD Written by: Patrick Hirsh, 2019 */
+////////////////////////////////////////////////////////////////////////////////
+
 #pragma once
 #include <assert.h>
 #include <errno.h>
@@ -29,6 +33,7 @@
 #include <signal.h>
 
 // Local
+#include "../SYSTEMGLOBALS.h"
 #include "Error.h"
 #include "PanelSource.h"
 #include "Render.h"
