@@ -1,25 +1,52 @@
 #pragma once
-#include "Libraries.h"
+#include <assert.h>
+#include <errno.h>
+#include <limits.h>
+#include <math.h>
+#include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <time.h>
+
+#include <algorithm>
+#include <cstring>
+#include <fstream>
+#include <iostream>
+#include <locale>
+#include <map>
+#include <vector>
+
+// Local
+#include "Error.h"
 #include "Render.h"
+#include "ResourceManager.h"
 
-using namespace rgb_matrix;
 
+////////////////////////////////////////////////////////////////////////////////
+// PanelSource
 
 class PanelSource
 {
     public:
-        virtual void Start(Canvas* canvas) = 0;
-        virtual void Restart() = 0;
-        virtual void Update(Canvas* canvas) = 0;   
+        virtual void Reset() = 0;
+        virtual void Update() = 0;   
 };
 
+////////////////////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////////////////////////
+// SOURCE: Clock
 
 class Clock : public PanelSource
 {
 				public:
-								void Start(Canvas* canvas);
-								void Restart();
-								void Update(Canvas* canvas);
+								Clock();
+								~Clock();
+								void Reset();
+								void Update();
 
     private:
         Font font;
@@ -30,4 +57,5 @@ class Clock : public PanelSource
         time_t* t;
 };
 
+////////////////////////////////////////////////////////////////////////////////
 

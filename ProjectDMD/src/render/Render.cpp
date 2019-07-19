@@ -1,13 +1,46 @@
-#include "../include/Render.h"
+#include "../../include/Render.h"
 
-void Render::Text(rgb_matrix::Canvas* canvas, std::string text, DMDF* font, std::tuple<int, int> origin, rgb_matrix::Color color, TextJustification justification, int horizontalSpacing)
+/* Statics */
+float Render::GlobalBrightness = 1.0f;
+Canvas* Render::_canvas;
+
+////////////////////////////////////////////////////////////////////////////////
+// Render
+
+/* Initializes the panel canvas using application arguments. Render should be
+initialized before any other systems. */
+void Render::Initialize(int argc, char* argv[])
 {
+				// define matrix options
+				RGBMatrix::Options defaults;
+				defaults.hardware_mapping = "adafruit-hat";
+				defaults.rows = 32;
+				defaults.cols = 64;
+				defaults.chain_length = 2;
+				defaults.show_refresh_rate = false;
+
+				// create the canvas
+				_canvas = rgb_matrix::CreateMatrixFromFlags(&argc, &argv, &defaults);
+				if (_canvas == NULL) { ErrorHandler::FatalError("Render", "Couldn't create canvas (are runtime arguments valid?)"); }
+}
+
+void Render::Text(
+				std::string													text, 
+				DMDF*																			font, 
+				std::tuple<int, int>				origin, 
+				rgb_matrix::Color							color, 
+				TextJustification							justification, 
+				int																					horizontalSpacing
+)
+{
+				if (_canvas == NULL) { ErrorHandler::FatalError("Render", "Canvas is null!"); }
 				std::tuple<int, int> currentRenderOrigin = origin;
 				DMDColorPalette colorPalette(color);
 
 				for (char& character : text)
 				{
 								// get DMDFC
+								character = toupper(character);
 								DMDFC* characterDMDFC = font->GetCharacter(character);	
 
 								if (characterDMDFC != NULL)
@@ -27,8 +60,10 @@ void Render::Text(rgb_matrix::Canvas* canvas, std::string text, DMDF* font, std:
 																								rgb_matrix::Color* renderColor = colorPalette.GetColor((*characterRaster)[col][row]);
 																								if (renderColor != NULL) 
 																								{ 
-																												canvas->SetPixel(std::get<0>(currentRenderOrigin) + col, std::get<1>(currentRenderOrigin) + row, 
-																																renderColor->r, renderColor->g, renderColor->b); 
+																												_canvas->SetPixel(std::get<0>(currentRenderOrigin) + col, std::get<1>(currentRenderOrigin) + row, 
+																																(int)(renderColor->r * GlobalBrightness), 
+																																(int)(renderColor->g * GlobalBrightness), 
+																																(int)(renderColor->b * GlobalBrightness)); 
 																								}
 																				}
 																}
@@ -38,7 +73,8 @@ void Render::Text(rgb_matrix::Canvas* canvas, std::string text, DMDF* font, std:
 								}
 								else
 								{
-												// TODO: Do something if the character is invalid... (for now, move render position by 5..)
+												// invalid character for selected font
+												ErrorHandler::LogWarning("Render", std::string(std::string("character '") + character + std::string("' not supported by font ") + font->GetName()));
 												std::get<0>(currentRenderOrigin) += 5;
 								}			
 								// add horizontal spacing between characters
@@ -46,8 +82,14 @@ void Render::Text(rgb_matrix::Canvas* canvas, std::string text, DMDF* font, std:
 				}
 }
 
-
-std::tuple<int, int> Render::getOriginAfterJustification(std::string text, DMDF* font, std::tuple<int, int> origin, int horizontalSpacing, TextJustification justification)
+/* Determines where to begin rendering based on selected Justification and text length */
+std::tuple<int, int> Render::getOriginAfterJustification(
+				std::string													text, 
+				DMDF*																			font, 
+				std::tuple<int, int>				origin, 
+				int																					horizontalSpacing, 
+				TextJustification							justification
+)
 {
 				int totalWidth = 0;
 				switch (justification)
@@ -82,3 +124,5 @@ std::tuple<int, int> Render::getOriginAfterJustification(std::string text, DMDF*
 												return origin;
 				}
 }
+
+////////////////////////////////////////////////////////////////////////////////

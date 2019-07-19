@@ -1,19 +1,10 @@
-#include "../../include/DMDF.h"
-
-////////////////////////////////////////////////////////////////////////////////
-// DMDFC
-
-DMDFC::DMDFC(char character, std::tuple<int, int> dimmensions, std::vector<std::vector<unsigned char>>* raster)
-{
-				Character = character;
-				CharacterDimensions = dimmensions;
-				CharacterRaster = raster;
-}
+#include "../../include/ResourceManager.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // DMDF
 
+/* Create a new DMDF based on a .dmdf file */
 DMDF::DMDF(std::string file)
 {
     // obtain font name (ignore trailing '/')
@@ -28,7 +19,7 @@ DMDF::DMDF(std::string file)
     std::ifstream source;
     source.exceptions ( std::ifstream::failbit | std::ifstream::badbit );
     try { source.open(file.c_str()); }
-    catch (std::ifstream::failure e) { LogError("DMDF", "Error opening " + file + " : " + std::strerror(errno)); }
+    catch (std::ifstream::failure e) { ErrorHandler::LogError("DMDF", "Error opening " + file + " : " + std::strerror(errno)); }
 
     if (!source.is_open()) { this->_loaded = false; }       
     else { this->_loaded = true; }
@@ -52,7 +43,7 @@ DMDF::DMDF(std::string file)
 								while (bufferIndex < length)
 								{
 												// read header
-												char character = buffer[bufferIndex];
+												char character = toupper(buffer[bufferIndex]);
 												std::tuple<int, int> dimensions(buffer[bufferIndex + 1], buffer[bufferIndex + 2]);
 												bufferIndex += 3;
 
@@ -60,7 +51,7 @@ DMDF::DMDF(std::string file)
 												if (std::get<1>(dimensions) != this->_fontHeight)
 												{
 																this->_loaded = false;
-																LogError("DMDF", "Font " + _fontName + " contains non-uniform raster heights");
+																ErrorHandler::LogError("DMDF", "Font " + _fontName + " contains non-uniform raster heights");
 																return;
 												}
 
@@ -84,36 +75,64 @@ DMDF::DMDF(std::string file)
 				source.close();
 }
 
+/* Get this DMDF character's raster */
 DMDFC* DMDF::GetCharacter(const char c)
 {
 				if (_loaded)
 				{
-								auto iter = (*this->_characters).find(c);
+								auto iter = (*this->_characters).find(toupper(c));
 								if (iter != (*this->_characters).end())
 								{
 												return iter->second;
 								}
 								return NULL;
 				} 
-				LogError("DMDF", "Tried to access a font that hasn't been loaded");
+				ErrorHandler::LogError("DMDF", "Tried to access a font that hasn't been loaded");
 				return NULL;
 }
 
+/* Get the string name of this DMDF */
 std::string DMDF::GetName()
 {
 				if (_loaded) { return this->_fontName; }
-				LogError("DMDF", "Tried to access a font that hasn't been loaded");
+				ErrorHandler::LogError("DMDF", "Tried to access a font that hasn't been loaded");
 				return "NOT_LOADED";
 }
 
+/* Get the number of characters in this DMDF */
 int DMDF::GetCount()
 {
 				if (_loaded) { return (*this->_characters).size(); }
-				LogError("DMDF", "Tried to access a font that hasn't been loaded");
+				ErrorHandler::LogError("DMDF", "Tried to access a font that hasn't been loaded");
 				return 0;
 }
 
+/* DMDF fonts are required to have a uniform raster height */
+int DMDF::GetFontHeight()
+{
+				if (_loaded) { return _fontHeight; }
+				ErrorHandler::LogError("DMDF", "Tried to access a font that hasn't been loaded");
+				return 0;
+}
+
+/* DMDFs remian unloaded if the constructor fails to load the font. (non-uniform 
+character height, invalid characters, invalid dmdf file, etc..) */
 bool DMDF::IsLoaded()
 {
 				return this->_loaded;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////////////////////////
+// DMDFC
+
+DMDFC::DMDFC(char character, std::tuple<int, int> dimmensions, std::vector<std::vector<unsigned char>>* raster)
+{
+				Character = character;
+				CharacterDimensions = dimmensions;
+				CharacterRaster = raster;
+}
+
+////////////////////////////////////////////////////////////////////////////////

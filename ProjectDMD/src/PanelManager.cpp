@@ -1,55 +1,55 @@
 #include "../include/PanelManager.h"
-#include "../include/PanelSource.h"
-#include "../include/ResourceManager.h"
+
+////////////////////////////////////////////////////////////////////////////////
+// PanelManager
 
 volatile bool interrupt_received = false;
-static void InterruptHandler(int signo) 
+static void InterruptHandler(int signo)
 {
-    interrupt_received = true;
+				interrupt_received = true;
 }
+
 
 int PanelManager::Run(int argc, char* argv[])
 {
+#if !__linux__
+				ErrorHandler::FatalError("ProjectDMD", "Unsupported operating system detected (expected linux)");
+#endif
+
     printf("\n\nrunning...\n\n");
 
-    // listen for interupts
-    signal(SIGTERM, InterruptHandler);
-    signal(SIGINT, InterruptHandler);
+				// listen for interupts
+				signal(SIGTERM, InterruptHandler);
+				signal(SIGINT, InterruptHandler);
 
-    // define matrix options
-    RGBMatrix::Options defaults;
-    defaults.hardware_mapping = "adafruit-hat";
-    defaults.rows = 32;
-    defaults.cols = 64;
-    defaults.chain_length = 2;
-    defaults.show_refresh_rate = false;
+    // system init
+				Render::Initialize(argc, argv);
+				ResourceManager::Initialize();
 
-    // create the canvas
-    Canvas* canvas = rgb_matrix::CreateMatrixFromFlags(&argc, &argv, &defaults);
-    if (canvas == NULL) { return 1; }
-
-    // initialize resources
-				ResourceManager::InitializeResources();
-
-    // initialize sources
+    // source init
     Clock clockSource;
-    clockSource.Start(canvas);
 
+				Render::GlobalBrightness = 0.5f;
+
+				// panel refresh loop
     while(!interrupt_received)
     {
         // clear canvas each frame update
-        canvas->Clear();
+        Render::Clear();
 
         // update sources...
-        clockSource.Update(canvas);
+        clockSource.Update();
 
-        // arbitrary sleep period
+        // temporary solution.. Render should do this
+#if __linux__
         usleep(1000000);
+#endif 
     }
 
     // shutdown
-    canvas->Clear();
-    delete canvas;
+    Render::Clear();
     printf("\n\nshutting down...\n\n");
     return 0;
 }
+
+////////////////////////////////////////////////////////////////////////////////

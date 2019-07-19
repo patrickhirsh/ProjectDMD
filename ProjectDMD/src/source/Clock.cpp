@@ -1,30 +1,39 @@
 #include "../../include/PanelSource.h"
 
 
-void Clock::Start(Canvas* canvas)
+////////////////////////////////////////////////////////////////////////////////
+// SOURCE: Clock
+
+Clock::Clock()
 {
-    const char* fontPath = "lib/rpi-rgb-led-matrix/fonts/10x20.bdf";
-    if (!font.LoadFont(fontPath))
-    {
-        printf("ERROR LOADING FONT\n");
-    }
-    time_format = "%r";
-    Color testColor(255, 0, 0);
-    color = testColor;  
-    t = (time_t*)malloc(sizeof(time_t));
+				Color testColor(255, 0, 0);
+				this->time_format = "%r";
+				this->color = testColor;
+				this->t = (time_t*)malloc(sizeof(time_t));
 }
 
-void Clock::Restart() 
+Clock::~Clock()
+{
+				delete t;
+}
+
+void Clock::Reset() 
 { 
-    return; 
+				Color testColor(255, 0, 0);
+				this->time_format = "%r";
+				this->color = testColor;
+				this->t = (time_t*)malloc(sizeof(time_t));
 }
 
-
-void Clock::Update(Canvas* canvas)
+void Clock::Update()
 {
+#if __linux__
     time(t);
     localtime_r(t, &tm);
     strftime(text_buffer, sizeof(text_buffer), time_format, &tm);
-    //rgb_matrix::DrawText(canvas, font, 64 - 55, 6 + font.baseline(), color, NULL, text_buffer);
-				Render::Text(canvas, text_buffer, ResourceManager::GetSystemFont(), std::tuple<int, int>(3, 3), *ResourceManager::GetSystemColorPalette()->GetColor(15));
+#endif
+				Render::Text(text_buffer, ResourceManager::GetFont("StarTrek_20.dmdf"), std::tuple<int, int>(3, 3), 
+								*ResourceManager::GetSystemColorPalette()->GetColor(15), TextJustification::Left, 0);
 }
+
+////////////////////////////////////////////////////////////////////////////////
