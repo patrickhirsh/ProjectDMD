@@ -8,15 +8,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 // ResourceManager
 
-/* System Globals */
+/* Statics */
 DMDColorPalette* ResourceManager::_systemColorPalette;
 DMDF* ResourceManager::_systemFont;
+std::map<std::string, DMDF*>* ResourceManager::_fonts = new std::map<std::string, DMDF*>();
 
 /* Constants*/
 const std::string DMDF_PATH_BASE = "./resources/fonts/dmdf";
 
-/* Statics */
-std::map<std::string, DMDF*>* ResourceManager::_fonts = new std::map<std::string, DMDF*>();
 
 /* initialize all resources. Should be called on startup before any rendering is done*/
 void ResourceManager::Initialize()

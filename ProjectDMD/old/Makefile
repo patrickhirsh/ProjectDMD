@@ -1,6 +1,23 @@
-CXXFLAGS=-Wall -O3 -g
-OBJECTS= ProjectDMD.o PanelManager.o ResourceManager.o DMDF.o Clock.o
+######################################################################
+# VARIABLES
+######################################################################
 
+# Compile
+CXXFLAGS = -Wall -O3 -g
+
+# Project Files
+HDR = $(wildcard include/*.h) SYSTEMGLOBALS.h
+SRC_BASE = $(wildcard src/*.cpp)
+SRC_RESOURCE = $(wildcard src/resource/*.cpp)
+SRC_SOURCES = $(wildcard src/source/*.cpp)
+SRC_UTILITY = $(wildcard src/utility/*.cpp)
+SRC_OBJECT = $(wildcard src/object/*.cpp)
+SRC_RENDER = $(wildcard src/render/*.cpp)
+SRC = $(SRC_BASE) $(SRC_SOURCES) $(SRC_UTILITY) $(SRC_RESOURCE) $(SRC_OBJECT) $(SRC_RENDER)
+TMP := $(subst src/,obj/,$(SRC))
+OBJ := $(subst .cpp,.o,$(TMP))
+
+# LIB FILES
 RGB_LIB_DISTRIBUTION=lib/rpi-rgb-led-matrix
 RGB_INCDIR=$(RGB_LIB_DISTRIBUTION)/include
 RGB_LIBDIR=$(RGB_LIB_DISTRIBUTION)/lib
@@ -8,32 +25,29 @@ RGB_LIBRARY_NAME=rgbmatrix
 RGB_LIBRARY=$(RGB_LIBDIR)/lib$(RGB_LIBRARY_NAME).a
 LDFLAGS+=-L$(RGB_LIBDIR) -l$(RGB_LIBRARY_NAME) -lrt -lm -lpthread
 
-all: $(RGB_LIBRARY) ProjectDMD
-	$(CXX) $(CXXFLAGS) $(OBJECTS) $(LDFLAGS) -o ProjectDMD
 
-clean:
-	rm -f $(OBJECTS) ProjectDMD
+######################################################################
+# TARGETS
+######################################################################
+
+ProjectDMD: $(OBJ) $(HDR) $(RGB_LIBRARY)
+	clean
+	$(CXX) $(CXXFLAGS) $(OBJ) -o ProjectDMD $(LDFLAGS)
 
 $(RGB_LIBRARY):
 	$(MAKE) -C $(RGB_LIBDIR)
 
-ProjectDMD: src/ProjectDMD.cpp PanelManager
-	$(CXX) -c $(CXXFLAGS) src/ProjectDMD.cpp
-
-PanelManager: src/PanelManager.cpp include/PanelManager.h ResourceManager Clock
-	$(CXX) -c $(CXXFLAGS) src/PanelManager.cpp
-
-ResourceManager: src/ResourceManager.cpp include/ResourceManager.h DMDF
-	$(CXX) -c $(CXXFLAGS) src/ResourceManager.cpp
+clean:
+	rm -f $(OBJ) ProjectDMD
 
 
-# ========== RESOURCES ========== #
+######################################################################
+# PATTERNS
+######################################################################
 
-DMDF: src/resource/DMDF.cpp include/DMDF.h include/libraries.h
-	$(CXX) -c $(CXXFLAGS) src/resource/DMDF.cpp
+obj/%.o: src/%.cpp
+	$(CXX) -c $(CXXFLAGS) $< -o $@
 
 
-# ========== SOURCES ========== #
-
-Clock: src/sources/Clock.cpp include/PanelSource.h include/libraries.h
-	$(CXX) -c $(CXXFLAGS) src/sources/Clock.cpp
+######################################################################
+.PHONY: clean

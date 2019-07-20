@@ -30,7 +30,7 @@ LDFLAGS+=-L$(RGB_LIBDIR) -l$(RGB_LIBRARY_NAME) -lrt -lm -lpthread
 # TARGETS
 ######################################################################
 
-all: $(OBJ) $(HDR) $(RGB_LIBRARY)
+ProjectDMD: clean $(OBJ) $(HDR) $(RGB_LIBRARY)
 	$(CXX) $(CXXFLAGS) $(OBJ) -o ProjectDMD $(LDFLAGS)
 
 $(RGB_LIBRARY):

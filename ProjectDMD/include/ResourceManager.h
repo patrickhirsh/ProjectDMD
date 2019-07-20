@@ -60,10 +60,8 @@ public:
     static DMDF* GetSystemFont();
 
 private:
-    /* System Globals */
     static DMDColorPalette*																									_systemColorPalette;
     static DMDF*																																				_systemFont;
-
     static std::map<std::string, DMDF*>*												_fonts;
 };
 

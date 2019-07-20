@@ -25,6 +25,10 @@
 // Local
 #include "../SYSTEMGLOBALS.h"
 
+// FW Dec
+class Render;
+class ResourceManager;
+
 class ErrorHandler
 {
 public:
