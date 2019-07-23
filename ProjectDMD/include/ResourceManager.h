@@ -39,6 +39,7 @@
 // Local
 #include "../SYSTEMGLOBALS.h"
 #include "Error.h"
+#include "Render.h"
 
 // Resources
 class DMDF;

@@ -60,8 +60,10 @@ rgb_matrix::Color* DMDColorPalette::GetColor(unsigned char sternValue)
     try { return _colorMapping[sternValue]; }
     catch (const std::out_of_range& oor)
     {
-        ErrorHandler::LogError("DMDColorPalette", "unrecognized sternValue detected: " + std::to_string((unsigned int)sternValue) + ". expected value: 0-15 or 255");
-        return NULL;
+        ErrorHandler::Log("DMDColorPalette", 
+            "unrecognized sternValue detected: " + std::to_string((unsigned int)sternValue) + ". expected value: 0-15 or 255", 
+            ErrorNum::WARNING_INVALID_STERN_COLOR_VAL);
+        return ResourceManager::GetSystemColorPalette()->GetColor(255);
     }
 }
 
@@ -70,7 +72,13 @@ Returns -1.0f for transparent (or unknown value) */
 float DMDColorPalette::getBrightnessFromSternValue(unsigned char value)
 {
     if (_sternPixelMap->find(value) != _sternPixelMap->end()) { return (*_sternPixelMap)[value]; }
-    else { ErrorHandler::LogError("DMDColorPalette", "unrecognized pixel value dectected: " + std::to_string((unsigned int)value) + ". expected value: 0-15 or 255"); return (*_sternPixelMap)[255]; }
+    else 
+    { 
+        ErrorHandler::Log("DMDColorPalette", 
+            "unrecognized sternValue dectected: " + std::to_string((unsigned int)value) + ". expected value: 0-15 or 255", 
+            ErrorNum::WARNING_INVALID_STERN_COLOR_VAL);         
+        return (*_sternPixelMap)[255]; 
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

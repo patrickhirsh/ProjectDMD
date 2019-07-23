@@ -3,10 +3,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-static const int				PANEL_WIDTH         = 64;
-static const int				PANEL_HEIGHT        = 32;
-static const int				PANEL_COUNT_X       = 2;
-static const int				PANEL_COUNT_Y       = 1;
-
-static const int				DISPLAY_WIDTH       = PANEL_WIDTH * PANEL_COUNT_X;
-static const int				DISPLAY_HEIGHT      = PANEL_HEIGHT * PANEL_COUNT_Y;
+#define PANEL_WIDTH 64
+#define PANEL_HEIGHT 32
+#define PANEL_COUNT_X 2
+#define PANEL_COUNT_Y 1
+        
+#define MISSING_CHAR_SPACING 5
+        
+#define DISPLAY_WIDTH PANEL_WIDTH * PANEL_COUNT_X;
+#define DISPLAY_HEIGHT PANEL_HEIGHT * PANEL_COUNT_Y;

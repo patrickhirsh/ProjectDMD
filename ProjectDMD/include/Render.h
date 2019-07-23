@@ -36,6 +36,10 @@
 
 using namespace rgb_matrix;
 
+/* Resource forward declaration */
+class DMDF;
+class DMDFC;
+
 enum TextJustification
 {
     Left,
@@ -59,6 +63,14 @@ public:
         TextJustification							justification = TextJustification::Left,
         int																					horizontalSpacing = 0);
 
+    static void Notification(
+        std::string             text,
+        DMDF*                   font,
+        std::tuple<int, int>    origin,
+        rgb_matrix::Color       color,
+        TextJustification       justification = TextJustification::Left,
+        int                     horizontalSpacing = 0);
+
 private:
     static Canvas*														_canvas;
 
@@ -68,4 +80,9 @@ private:
         std::tuple<int, int>				origin,
         int																					horizontalSpacing,
         TextJustification							justification);
+
+    static int getTextWidth(
+        std::string													text,
+        DMDF*																			font,
+        int																					horizontalSpacing);
 };

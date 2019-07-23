@@ -12,25 +12,30 @@
 int ErrorHandler::_errorCount = 0;
 int ErrorHandler::_warningCount = 0;
 
-/* Fatal errors stop execution immediately and attempt to draw to the
-panel (if possible) to describe the error */
-void ErrorHandler::FatalError(std::string source, std::string reason)
-{
-    printf("%s FATAL ERROR: %s\n", source.c_str(), reason.c_str());
-}
 
-/* Errors don't stop execution, but they are displayed on-screen */
-void ErrorHandler::LogError(std::string source, std::string reason)
-{
+/* Log a Warning, Error, or Fatal Error. Warnings are logged to console. Errors are 
+displayed on-screen temporarily, and Fatal Errors halt the program, then display on-screen. */
+void ErrorHandler::Log(std::string source, std::string reason, ErrorNum errorNumber)
+{   
+    // FATAL
+    if (errorNumber < 500)
+    {
+        printf("[%s] FATAL ERROR (%d): %s\n", source.c_str(), (int)errorNumber, reason.c_str());
+    }
 
-    printf("%s ERROR: %s\n", source.c_str(), reason.c_str());
-    // TODO: render temporary animation on-screen to indicate an error
-}
+    // ERROR
+    else if (errorNumber < 1000)
+    {
+        _errorCount++;
+        printf("[%s] ERROR (%d): %s\n", source.c_str(), (int)errorNumber, reason.c_str());
+    }
 
-/* Warnings are logged, but not displayed on screen */
-void ErrorHandler::LogWarning(std::string source, std::string reason)
-{
-    printf("%s WARNING: %s\n", source.c_str(), reason.c_str());
+    // WARNING
+    else
+    {
+        _warningCount++;
+        printf("[%s] WARNING (%d): %s\n", source.c_str(), (int)errorNumber, reason.c_str());
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

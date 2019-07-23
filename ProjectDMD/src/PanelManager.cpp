@@ -16,10 +16,6 @@ static void InterruptHandler(int signo)
 
 int PanelManager::Run(int argc, char* argv[])
 {
-#if !__linux__
-    ErrorHandler::FatalError("ProjectDMD", "Unsupported operating system detected (expected linux)");
-#endif
-
     printf("\n\nrunning...\n\n");
 
     // listen for interupts

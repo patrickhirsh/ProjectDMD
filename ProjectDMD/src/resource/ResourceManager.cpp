@@ -29,7 +29,8 @@ void ResourceManager::Initialize()
     DIR* dir;
     class dirent* ent;
     dir = opendir(DMDF_PATH_BASE.c_str());
-    if (dir == NULL) { ErrorHandler::LogError("ResourceManager", "Couldn't open DMDF_PATH_BASE directory..."); }
+    if (dir == NULL) { ErrorHandler::Log("ResourceManager", 
+        "Couldn't open DMDF_PATH_BASE directory...", ErrorNum::FATAL_INVALID_RESOURCE_PATH); }
     else
     {
         errno = 0;
@@ -40,11 +41,10 @@ void ResourceManager::Initialize()
             DMDF* font = new DMDF(fontPath);
             (*_fonts)[font->GetName()] = font;
         }
-        if (errno) { ErrorHandler::LogError("ResourceManager", std::string("Directory read error occured (errno: %d)", errno)); }
+        if (errno) { ErrorHandler::Log("ResourceManager", 
+            std::string("Directory read error occured (errno: %d)", errno), ErrorNum::FATAL_DIR_READ_ERROR); }
     }
     closedir(dir);
-#else
-    ErrorHandler::FatalError("ResourceManager", "Unsupported operating system detected (requires Linux)");
 #endif
 }
 
@@ -54,8 +54,10 @@ DMDF* ResourceManager::GetFont(std::string fontName)
     if (_fonts->find(fontName) != _fonts->end()) { return (*_fonts)[fontName]; }
     else
     {
-        ErrorHandler::LogError("ResourceManager", "font " + fontName + " not found...");
-        return NULL;
+        ErrorHandler::Log("ResourceManager", 
+            "font " + fontName + " not found...", ErrorNum::ERROR_RESOURCE_NOT_FOUND);
+        
+        return _systemFont;
     }
 }
 

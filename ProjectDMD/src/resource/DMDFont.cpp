@@ -23,7 +23,8 @@ DMDF::DMDF(std::string file)
     std::ifstream source;
     source.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     try { source.open(file.c_str()); }
-    catch (std::ifstream::failure e) { ErrorHandler::LogError("DMDF", "Error opening " + file + " : " + std::strerror(errno)); }
+    catch (std::ifstream::failure e) { ErrorHandler::Log("DMDF", 
+        "Error opening " + file + " : " + std::strerror(errno), ErrorNum::ERROR_RESOURCE_NOT_FOUND); }
 
     if (!source.is_open()) { this->_loaded = false; }
     else { this->_loaded = true; }
@@ -55,7 +56,8 @@ DMDF::DMDF(std::string file)
             if (std::get<1>(dimensions) != this->_fontHeight)
             {
                 this->_loaded = false;
-                ErrorHandler::LogError("DMDF", "Font " + _fontName + " contains non-uniform raster heights");
+                ErrorHandler::Log("DMDF", 
+                    "Font " + _fontName + " contains non-uniform raster heights", ErrorNum::ERROR_INVALID_FONT);
                 return;
             }
 
@@ -91,7 +93,9 @@ DMDFC* DMDF::GetCharacter(const char c)
         }
         return NULL;
     }
-    ErrorHandler::LogError("DMDF", "Tried to access a font that hasn't been loaded");
+    // Invalid fonts default to _systemFont, so if we're here, something is really wrong
+    ErrorHandler::Log("DMDF", 
+        "Tried to access a font that hasn't been loaded", ErrorNum::FATAL_RESOURCE_NOT_LOADED);
     return NULL;
 }
 
@@ -99,7 +103,8 @@ DMDFC* DMDF::GetCharacter(const char c)
 std::string DMDF::GetName()
 {
     if (_loaded) { return this->_fontName; }
-    ErrorHandler::LogError("DMDF", "Tried to access a font that hasn't been loaded");
+    // Invalid fonts default to _systemFont, so if we're here, something is really wrong
+    ErrorHandler::Log("DMDF", "Tried to access a font that hasn't been loaded", ErrorNum::FATAL_RESOURCE_NOT_LOADED);
     return "NOT_LOADED";
 }
 
@@ -107,7 +112,8 @@ std::string DMDF::GetName()
 int DMDF::GetCount()
 {
     if (_loaded) { return (*this->_characters).size(); }
-    ErrorHandler::LogError("DMDF", "Tried to access a font that hasn't been loaded");
+    // Invalid fonts default to _systemFont, so if we're here, something is really wrong
+    ErrorHandler::Log("DMDF", "Tried to access a font that hasn't been loaded", ErrorNum::FATAL_RESOURCE_NOT_LOADED);
     return 0;
 }
 
@@ -115,11 +121,11 @@ int DMDF::GetCount()
 int DMDF::GetFontHeight()
 {
     if (_loaded) { return _fontHeight; }
-    ErrorHandler::LogError("DMDF", "Tried to access a font that hasn't been loaded");
+    ErrorHandler::Log("DMDF", "Tried to access a font that hasn't been loaded", ErrorNum::FATAL_RESOURCE_NOT_LOADED);
     return 0;
 }
 
-/* DMDFs remian unloaded if the constructor fails to load the font. (non-uniform
+/* DMDFs remain unloaded if the constructor fails to load the font. (non-uniform
 character height, invalid characters, invalid dmdf file, etc..) */
 bool DMDF::IsLoaded()
 {

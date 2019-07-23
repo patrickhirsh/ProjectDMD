@@ -25,7 +25,8 @@ void Render::Initialize(int argc, char* argv[])
 
     // create the canvas
     _canvas = rgb_matrix::CreateMatrixFromFlags(&argc, &argv, &defaults);
-    if (_canvas == NULL) { ErrorHandler::FatalError("Render", "Couldn't create canvas (are runtime arguments valid?)"); }
+    if (_canvas == NULL) { ErrorHandler::Log("Render", 
+        "Couldn't create canvas (are runtime arguments valid?)", ErrorNum::FATAL_INVALID_CANVAS); }
 }
 
 void Render::Text(
@@ -37,7 +38,9 @@ void Render::Text(
     int																					horizontalSpacing
 )
 {
-    if (_canvas == NULL) { ErrorHandler::FatalError("Render", "Canvas is null!"); }
+    if (_canvas == NULL) { ErrorHandler::Log("Render", 
+        "Canvas is null!", ErrorNum::FATAL_INVALID_CANVAS); }
+    
     std::tuple<int, int> currentRenderOrigin = origin;
     DMDColorPalette colorPalette(color);
 
@@ -69,6 +72,11 @@ void Render::Text(
                                 (int)(renderColor->g * GlobalBrightness),
                                 (int)(renderColor->b * GlobalBrightness));
                         }
+                        else
+                        {
+                            ErrorHandler::Log("Render", 
+                                "expected a stern value, got %d", ErrorNum::WARNING_INVALID_STERN_COLOR_VAL);
+                        }
                     }
                 }
             }
@@ -78,12 +86,31 @@ void Render::Text(
         else
         {
             // invalid character for selected font
-            ErrorHandler::LogWarning("Render", std::string(std::string("character '") + character + std::string("' not supported by font ") + font->GetName()));
             std::get<0>(currentRenderOrigin) += 5;
+
+            // space character is fine, if invalid (since we essentially just added a space)
+            if (character != ' ')
+            {
+                ErrorHandler::Log("Render",
+                    std::string(std::string("character '") + character + std::string("' not supported by font ") + font->GetName()),
+                    ErrorNum::WARNING_UNSUPPORTED_CHARACTER);
+            }    
         }
         // add horizontal spacing between characters
         std::get<0>(currentRenderOrigin) += horizontalSpacing;
     }
+}
+
+void Render::Notification(
+    std::string             text,
+    DMDF*                   font,
+    std::tuple<int, int>    origin,
+    rgb_matrix::Color       color,
+    TextJustification       justification,
+    int                     horizontalSpacing
+)
+{
+
 }
 
 /* Determines where to begin rendering based on selected Justification and text length */
@@ -95,7 +122,6 @@ std::tuple<int, int> Render::getOriginAfterJustification(
     TextJustification							justification
 )
 {
-    int totalWidth = 0;
     switch (justification)
     {
     case TextJustification::Left:
@@ -103,30 +129,33 @@ std::tuple<int, int> Render::getOriginAfterJustification(
         break;
 
     case TextJustification::Center:
-        for (char& character : text)
-        {
-            DMDFC* characterDMDFC = font->GetCharacter(character);
-            if (characterDMDFC != NULL) { totalWidth += std::get<0>(characterDMDFC->CharacterDimensions); }
-            else { totalWidth += 5; }
-        }
-        totalWidth += (text.length() - 1)*horizontalSpacing;
-        return std::tuple<int, int>(std::get<0>(origin) - totalWidth / 2, std::get<1>(origin));
+        return std::tuple<int, int>(std::get<0>(origin) - (getTextWidth(text, font, horizontalSpacing) / 2), std::get<1>(origin));
         break;
 
     case TextJustification::Right:
-        for (char& character : text)
-        {
-            DMDFC* characterDMDFC = font->GetCharacter(character);
-            if (characterDMDFC != NULL) { totalWidth += std::get<0>(characterDMDFC->CharacterDimensions); }
-            else { totalWidth += 5; }
-        }
-        totalWidth += (text.length() - 1)*horizontalSpacing;
-        return std::tuple<int, int>(std::get<0>(origin) - totalWidth, std::get<1>(origin));
+        return std::tuple<int, int>(std::get<0>(origin) - getTextWidth(text, font, horizontalSpacing), std::get<1>(origin));
         break;
 
     default:
         return origin;
     }
+}
+
+/* Get the total width of "text" rendered in "font" with "horizontalSpacing" */
+int Render::getTextWidth(
+    std::string													text,
+    DMDF*																			font,
+    int																					horizontalSpacing
+)
+{
+    int totalWidth = 0;
+    for (char& character : text)
+    {
+        DMDFC* characterDMDFC = font->GetCharacter(character);
+        if (characterDMDFC != NULL) { totalWidth += std::get<0>(characterDMDFC->CharacterDimensions); }
+        else { totalWidth += 5; }
+    }
+    return (totalWidth + ((text.length() - 1)*horizontalSpacing));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
