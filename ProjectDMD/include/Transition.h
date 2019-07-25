@@ -22,40 +22,19 @@
 #include <map>
 #include <vector>
 
-// Linux Only
-#if __linux__
-#include <getopt.h>
-#include <unistd.h>
-#include <dirent.h>
-#endif
-
-// All Platforms
-#include <signal.h>
-
 // Local
 #include "../SYSTEMGLOBALS.h"
 #include "Error.h"
-#include "PanelMode.h"
-#include "PanelSource.h"
-#include "Render.h"
-#include "ResourceManager.h"
 
 
-class PanelManager
+////////////////////////////////////////////////////////////////////////////////
+// Transition
+
+class Transition
 {
 public:
-
-    /* Master Panel Mode List */
-    enum Mode
-    {
-        BasicClock
-    };
-
-    static int Run(int argc, char *argv[]);
-
-private:
-    static Mode _currentMode;
-    static std::map<Mode, PanelMode*> _panelModes;
-    static void initializeSystems(int argc, char *argv[]);
-    static void initializeModes();
+    virtual void Modify(rgb_matrix::Color& color) const;
+    virtual void Transform(int& xOrigin, int& yOrigin) const;
 };
+
+////////////////////////////////////////////////////////////////////////////////

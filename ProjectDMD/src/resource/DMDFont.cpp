@@ -81,8 +81,17 @@ DMDF::DMDF(std::string file)
     source.close();
 }
 
+/* Copy constructor */
+DMDF::DMDF(const DMDF* fontToCopy)
+{
+    _loaded = fontToCopy->_loaded;
+    _characters = fontToCopy->_characters;
+    _fontHeight = fontToCopy->_fontHeight;
+    _fontName = fontToCopy->_fontName;
+}
+
 /* Get this DMDF character's raster */
-DMDFC* DMDF::GetCharacter(const char c)
+const DMDFC* DMDF::GetCharacter(const char c) const
 {
     if (_loaded)
     {
@@ -100,7 +109,7 @@ DMDFC* DMDF::GetCharacter(const char c)
 }
 
 /* Get the string name of this DMDF */
-std::string DMDF::GetName()
+const std::string DMDF::GetName() const
 {
     if (_loaded) { return this->_fontName; }
     // Invalid fonts default to _systemFont, so if we're here, something is really wrong
@@ -109,7 +118,7 @@ std::string DMDF::GetName()
 }
 
 /* Get the number of characters in this DMDF */
-int DMDF::GetCount()
+int DMDF::GetCount() const
 {
     if (_loaded) { return (*this->_characters).size(); }
     // Invalid fonts default to _systemFont, so if we're here, something is really wrong
@@ -118,7 +127,7 @@ int DMDF::GetCount()
 }
 
 /* DMDF fonts are required to have a uniform raster height */
-int DMDF::GetFontHeight()
+int DMDF::GetFontHeight() const
 {
     if (_loaded) { return _fontHeight; }
     ErrorHandler::Log("DMDF", "Tried to access a font that hasn't been loaded", ErrorNum::FATAL_RESOURCE_NOT_LOADED);
@@ -127,7 +136,7 @@ int DMDF::GetFontHeight()
 
 /* DMDFs remain unloaded if the constructor fails to load the font. (non-uniform
 character height, invalid characters, invalid dmdf file, etc..) */
-bool DMDF::IsLoaded()
+bool DMDF::IsLoaded() const
 {
     return this->_loaded;
 }

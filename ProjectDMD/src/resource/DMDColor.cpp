@@ -48,6 +48,23 @@ DMDColorPalette::DMDColorPalette(rgb_matrix::Color color)
     }
 }
 
+/* Creates a color palette (star intensity values in the form of rgb_matrix colors)
+for use when rendering for improved performance. Do this once for any mono-color render,
+then call GetColor() to get any color in the palette without the computational overhead
+of per-pixel transcoding. */
+DMDColorPalette::DMDColorPalette(const rgb_matrix::Color* color)
+{
+    _colorMapping = std::map<unsigned char, rgb_matrix::Color*>();
+    for (unsigned char i = 0; i < 16; i++)
+    {
+        rgb_matrix::Color* newColor = new rgb_matrix::Color(
+            (uint8_t)(color->r * getBrightnessFromSternValue(i)),
+            (uint8_t)(color->g * getBrightnessFromSternValue(i)),
+            (uint8_t)(color->b * getBrightnessFromSternValue(i)));
+        _colorMapping[i] = newColor;
+    }
+}
+
 DMDColorPalette::~DMDColorPalette()
 {
     for (unsigned char i = 0; i < 16; i++)
@@ -55,7 +72,7 @@ DMDColorPalette::~DMDColorPalette()
 }
 
 /* Given a stern value (expects 0-15 or 255), returns the equivalent rgb_matrix::Color */
-rgb_matrix::Color* DMDColorPalette::GetColor(unsigned char sternValue)
+const rgb_matrix::Color* DMDColorPalette::GetColor(unsigned char sternValue) const
 {
     try { return _colorMapping[sternValue]; }
     catch (const std::out_of_range& oor)

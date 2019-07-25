@@ -33,6 +33,7 @@
 #include "../SYSTEMGLOBALS.h"
 #include "Error.h"
 #include "ResourceManager.h"
+#include "Transition.h"
 
 using namespace rgb_matrix;
 
@@ -40,49 +41,58 @@ using namespace rgb_matrix;
 class DMDF;
 class DMDFC;
 
-enum TextJustification
-{
-    Left,
-    Center,
-    Right
-};
-
 class Render
 {
 public:
-    static float																GlobalBrightness;
-    static void																	Initialize(int argc, char* argv[]);
-    static bool																	IsCanvasValid() { return _canvas ? true : false; }
-    static void																	Clear() { _canvas->Clear(); }
+    enum TextJustification
+    {
+        Left,
+        Center,
+        Right
+    };
+
+    static float																        GlobalBrightness;
+    static void																	        Initialize(int argc, char* argv[]);
+    static bool																	        IsCanvasValid() { return _canvas ? true : false; }
+    static void																	        Clear() { _canvas->Clear(); }
 
     static void Text(
-        std::string													text,
-        DMDF*																			font,
-        std::tuple<int, int>				origin,
-        rgb_matrix::Color							color,
-        TextJustification							justification = TextJustification::Left,
-        int																					horizontalSpacing = 0);
+        const std::vector<Transition*>  activeTransitions,
+        std::string													        text,
+        const DMDF*																			  font,
+        std::tuple<int, int>				        origin,
+        const rgb_matrix::Color*							 color,
+        TextJustification							        justification = TextJustification::Left,
+        int																					        horizontalSpacing = 0);
 
     static void Notification(
-        std::string             text,
-        DMDF*                   font,
-        std::tuple<int, int>    origin,
-        rgb_matrix::Color       color,
-        TextJustification       justification = TextJustification::Left,
-        int                     horizontalSpacing = 0);
+        const std::vector<Transition*>  activeTransitions,
+        std::string                     text,
+        const DMDF*                     font,
+        std::tuple<int, int>            origin,
+        rgb_matrix::Color               color,
+        TextJustification               justification = TextJustification::Left,
+        int                             horizontalSpacing = 0);
 
 private:
-    static Canvas*														_canvas;
+    static Canvas*														        _canvas;
+
+    static void setPixel(
+        rgb_matrix::Canvas*             canvas,
+        int                             xPos,
+        int                             yPos,
+        const rgb_matrix::Color*        color,
+        const std::vector<Transition*>  activeTransitions);
 
     static std::tuple<int, int> getOriginAfterJustification(
-        std::string													text,
-        DMDF*																			font,
-        std::tuple<int, int>				origin,
-        int																					horizontalSpacing,
-        TextJustification							justification);
+        std::string													        text,
+        const DMDF*																			  font,
+        std::tuple<int, int>				        origin,
+        int																					        horizontalSpacing,
+        TextJustification							        justification);
 
     static int getTextWidth(
-        std::string													text,
-        DMDF*																			font,
-        int																					horizontalSpacing);
+        std::string													        text,
+        const DMDF*																			  font,
+        int																					        horizontalSpacing);
 };

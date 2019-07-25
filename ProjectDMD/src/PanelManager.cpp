@@ -7,6 +7,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 // PanelManager
 
+/* statics */
+PanelManager::Mode PanelManager::_currentMode;
+std::map<PanelManager::Mode, PanelMode*> PanelManager::_panelModes;
+
+/* interupt management */
 volatile bool interrupt_received = false;
 static void InterruptHandler(int signo)
 {
@@ -22,12 +27,9 @@ int PanelManager::Run(int argc, char* argv[])
     signal(SIGTERM, InterruptHandler);
     signal(SIGINT, InterruptHandler);
 
-    // system init
-    Render::Initialize(argc, argv);
-    ResourceManager::Initialize();
-
-    // source init
-    Clock clockSource;
+    // initialize
+    initializeSystems(argc, argv);
+    initializeModes();
 
     Render::GlobalBrightness = 0.2f;
 
@@ -37,8 +39,8 @@ int PanelManager::Run(int argc, char* argv[])
         // clear canvas each frame update
         Render::Clear();
 
-        // update sources...
-        clockSource.Update();
+        // refresh the current mode
+        _panelModes[_currentMode]->Update();
 
         // temporary solution.. Render should do this
 #if __linux__
@@ -50,6 +52,28 @@ int PanelManager::Run(int argc, char* argv[])
     Render::Clear();
     printf("\n\nshutting down...\n\n");
     return 0;
+}
+
+void PanelManager::initializeSystems(int argc, char *argv[])
+{
+    Render::Initialize(argc, argv);
+    ResourceManager::Initialize();
+}
+
+void PanelManager::initializeModes()
+{
+    _panelModes.empty();
+
+    _panelModes[Mode::BasicClock] = new MClock(
+        std::tuple<int, int>(DISPLAY_WIDTH / 2, ((DISPLAY_HEIGHT / 2) - (ResourceManager::GetFont("StarTrek_20.dmdf")->GetFontHeight() / 2))),
+        STime::HH_MM_12_PERIOD,
+        Render::TextJustification::Center,
+        0,
+        ResourceManager::GetSystemColorPalette()->GetColor(15),
+        ResourceManager::GetFont("StarTrek_20.dmdf")
+    );
+
+    _currentMode = Mode::BasicClock;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -49,7 +49,7 @@ void ResourceManager::Initialize()
 }
 
 /* Get font by font name (includes file extension) */
-DMDF* ResourceManager::GetFont(std::string fontName)
+const DMDF* ResourceManager::GetFont(std::string fontName)
 {
     if (_fonts->find(fontName) != _fonts->end()) { return (*_fonts)[fontName]; }
     else
@@ -72,18 +72,18 @@ bool ResourceManager::SetSystemFont(std::string fontName)
 {
     if (ResourceManager::GetFont(fontName) != NULL)
     {
-        _systemFont = ResourceManager::GetFont(fontName);
+        _systemFont = new DMDF(ResourceManager::GetFont(fontName));
         return true;
     }
     else { return false; }
 }
 
-DMDColorPalette* ResourceManager::GetSystemColorPalette()
+const DMDColorPalette* ResourceManager::GetSystemColorPalette()
 {
     return _systemColorPalette;
 }
 
-DMDF* ResourceManager::GetSystemFont()
+const DMDF* ResourceManager::GetSystemFont()
 {
     return _systemFont;
 }

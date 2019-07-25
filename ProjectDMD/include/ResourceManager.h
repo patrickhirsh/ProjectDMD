@@ -53,12 +53,12 @@ class ResourceManager
 {
 public:
     static void Initialize();
-    static DMDF* GetFont(std::string fontName);
+    static const DMDF* GetFont(std::string fontName);
 
     static void SetSystemColorPalette(rgb_matrix::Color color);
     static bool SetSystemFont(std::string fontName);
-    static DMDColorPalette* GetSystemColorPalette();
-    static DMDF* GetSystemFont();
+    static const DMDColorPalette* GetSystemColorPalette();
+    static const DMDF* GetSystemFont();
 
 private:
     static DMDColorPalette*																									_systemColorPalette;
@@ -76,11 +76,12 @@ class DMDF
 {
 public:
     DMDF(std::string file);
-    DMDFC* GetCharacter(const char c);
-    std::string GetName();
-    int GetCount();
-    int GetFontHeight();
-    bool IsLoaded();
+    DMDF(const DMDF* fontToCopy);
+    const DMDFC* GetCharacter(const char c) const;
+    const std::string GetName() const;
+    int GetCount() const;
+    int GetFontHeight() const;
+    bool IsLoaded() const;
 
 private:
     bool _loaded;
@@ -117,15 +118,16 @@ class DMDColorPalette
 {
 public:
     DMDColorPalette(rgb_matrix::Color color);
+    DMDColorPalette(const rgb_matrix::Color* color);
     ~DMDColorPalette();
-    rgb_matrix::Color* GetColor(unsigned char sternValue);
+    const rgb_matrix::Color* GetColor(unsigned char sternValue) const;
 
 private:
     static std::map<unsigned char, float>* _sternPixelMap;
     static float getBrightnessFromSternValue(unsigned char sternValue);
 
     /* stores mappings from stern values (255 and 0-15) to Colors based on this DMDColorPalette*/
-    std::map<unsigned char, rgb_matrix::Color*> _colorMapping;
+    mutable std::map<unsigned char, rgb_matrix::Color*> _colorMapping;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

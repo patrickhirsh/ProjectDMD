@@ -30,31 +30,31 @@ void Render::Initialize(int argc, char* argv[])
 }
 
 void Render::Text(
-    std::string													text,
-    DMDF*																			font,
-    std::tuple<int, int>				origin,
-    rgb_matrix::Color							color,
-    TextJustification							justification,
-    int																					horizontalSpacing
+    const std::vector<Transition*>  activeTransitions,
+    std::string													        text,
+    const DMDF*																			  font,
+    std::tuple<int, int>				        origin,
+    const rgb_matrix::Color*							 color,
+    TextJustification							        justification,
+    int																					        horizontalSpacing
 )
 {
     if (_canvas == NULL) { ErrorHandler::Log("Render", 
         "Canvas is null!", ErrorNum::FATAL_INVALID_CANVAS); }
     
-    std::tuple<int, int> currentRenderOrigin = origin;
+    std::tuple<int, int> currentRenderOrigin = getOriginAfterJustification(text, font, origin, horizontalSpacing, justification);;
     DMDColorPalette colorPalette(color);
 
     for (char& character : text)
     {
         // get DMDFC
         character = toupper(character);
-        DMDFC* characterDMDFC = font->GetCharacter(character);
 
-        if (characterDMDFC != NULL)
+        if (font->GetCharacter(character) != NULL)
         {
             // if DMDFC is valid, get DMDFC data
-            std::tuple<int, int> characterDimensions = characterDMDFC->CharacterDimensions;
-            std::vector<std::vector<unsigned char>>* characterRaster = characterDMDFC->CharacterRaster;
+            std::tuple<int, int> characterDimensions = font->GetCharacter(character)->CharacterDimensions;
+            std::vector<std::vector<unsigned char>>* characterRaster = font->GetCharacter(character)->CharacterRaster;
 
             // render character
             for (int row = 0; row < std::get<1>(characterDimensions); row++)
@@ -64,13 +64,14 @@ void Render::Text(
                     // don't render transparent pixels
                     if ((*characterRaster)[col][row] != 255)
                     {
-                        rgb_matrix::Color* renderColor = colorPalette.GetColor((*characterRaster)[col][row]);
-                        if (renderColor != NULL)
+                        if (colorPalette.GetColor((*characterRaster)[col][row]) != NULL)
                         {
-                            _canvas->SetPixel(std::get<0>(currentRenderOrigin) + col, std::get<1>(currentRenderOrigin) + row,
-                                (int)(renderColor->r * GlobalBrightness),
-                                (int)(renderColor->g * GlobalBrightness),
-                                (int)(renderColor->b * GlobalBrightness));
+                            setPixel(
+                                _canvas,
+                                std::get<0>(currentRenderOrigin) + col,
+                                std::get<1>(currentRenderOrigin) + row,
+                                colorPalette.GetColor((*characterRaster)[col][row]),
+                                activeTransitions);
                         }
                         else
                         {
@@ -102,24 +103,51 @@ void Render::Text(
 }
 
 void Render::Notification(
-    std::string             text,
-    DMDF*                   font,
-    std::tuple<int, int>    origin,
-    rgb_matrix::Color       color,
-    TextJustification       justification,
-    int                     horizontalSpacing
+    const std::vector<Transition*>  activeTransitions,
+    std::string                     text,
+    const DMDF*                     font,
+    std::tuple<int, int>            origin,
+    rgb_matrix::Color               color,
+    TextJustification               justification,
+    int                             horizontalSpacing
 )
 {
 
 }
 
+/* internal setPixel method, which automatically applies any active transitions and gloabl modifiers */
+void Render::setPixel(
+    rgb_matrix::Canvas*             canvas,
+    int                             xPos,
+    int                             yPos,
+    const rgb_matrix::Color*        color,
+    const std::vector<Transition*>  activeTransitions
+)
+{
+    // apply active transition modifiers
+    rgb_matrix::Color finalColor;
+    finalColor.r = color->r;
+    finalColor.g = color->g;
+    finalColor.b = color->b;
+    for (const Transition* transition : activeTransitions)
+    {
+        transition->Modify(finalColor);
+    }
+
+    // apply global modifiers
+    canvas->SetPixel(xPos, yPos,
+        (int)(finalColor.r * GlobalBrightness),
+        (int)(finalColor.g * GlobalBrightness),
+        (int)(finalColor.b * GlobalBrightness));
+}
+
 /* Determines where to begin rendering based on selected Justification and text length */
 std::tuple<int, int> Render::getOriginAfterJustification(
-    std::string													text,
-    DMDF*																			font,
-    std::tuple<int, int>				origin,
-    int																					horizontalSpacing,
-    TextJustification							justification
+    std::string													        text,
+    const DMDF*																			  font,
+    std::tuple<int, int>				        origin,
+    int																					        horizontalSpacing,
+    TextJustification							        justification
 )
 {
     switch (justification)
@@ -143,16 +171,18 @@ std::tuple<int, int> Render::getOriginAfterJustification(
 
 /* Get the total width of "text" rendered in "font" with "horizontalSpacing" */
 int Render::getTextWidth(
-    std::string													text,
-    DMDF*																			font,
-    int																					horizontalSpacing
+    std::string													        text,
+    const DMDF*																			  font,
+    int																					        horizontalSpacing
 )
 {
     int totalWidth = 0;
     for (char& character : text)
     {
-        DMDFC* characterDMDFC = font->GetCharacter(character);
-        if (characterDMDFC != NULL) { totalWidth += std::get<0>(characterDMDFC->CharacterDimensions); }
+        if (font->GetCharacter(character) != NULL) 
+        { 
+            totalWidth += std::get<0>(font->GetCharacter(character)->CharacterDimensions); 
+        }
         else { totalWidth += 5; }
     }
     return (totalWidth + ((text.length() - 1)*horizontalSpacing));
