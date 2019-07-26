@@ -31,7 +31,7 @@ int PanelManager::Run(int argc, char* argv[])
     initializeSystems(argc, argv);
     initializeModes();
 
-    Render::GlobalBrightness = 0.2f;
+    Render::GlobalBrightness = 1.0f;
 
     // panel refresh loop
     while (!interrupt_received)
@@ -42,9 +42,9 @@ int PanelManager::Run(int argc, char* argv[])
         // refresh the current mode
         _panelModes[_currentMode]->Update();
 
-        // temporary solution.. Render should do this
+        // lock frames at 20/s
 #if __linux__
-        usleep(1000000);
+        usleep(50000);
 #endif 
     }
 
@@ -66,7 +66,7 @@ void PanelManager::initializeModes()
 
     _panelModes[Mode::BasicClock] = new MClock(
         std::tuple<int, int>(DISPLAY_WIDTH / 2, ((DISPLAY_HEIGHT / 2) - (ResourceManager::GetFont("StarTrek_20.dmdf")->GetFontHeight() / 2))),
-        STime::HH_MM_12_PERIOD,
+        STime::HH_MM_SS_12_PERIOD,
         Render::TextJustification::Center,
         0,
         ResourceManager::GetSystemColorPalette()->GetColor(15),

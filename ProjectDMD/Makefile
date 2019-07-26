@@ -41,6 +41,9 @@ $(RGB_LIBRARY):
 clean:
 	rm -f $(OBJ) ProjectDMD
 
+run:
+	sudo ./ProjectDMD --led-show-refresh --led-pwm-lsb-nanoseconds=50 --led-pwm-dither-bits=2
+
 
 ######################################################################
 # PATTERNS
@@ -51,4 +54,4 @@ obj/%.o: src/%.cpp
 
 
 ######################################################################
-.PHONY: clean
+.PHONY: clean, run
