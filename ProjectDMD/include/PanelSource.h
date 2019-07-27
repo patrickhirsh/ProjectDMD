@@ -28,7 +28,7 @@
 #include "Error.h"
 #include "Render.h"
 #include "ResourceManager.h"
-#include "Transition.h"
+#include "Modifier.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -39,11 +39,11 @@ class PanelSource
 public:
     virtual void Update() = 0;
     virtual ~PanelSource() = 0;
-    void AddTransition(Transition* transition);
+    void AddModifier(Modifier* modifier);
 
 protected:
-    std::vector<Transition*> _activeTransitions;
-    virtual void TransitionCallback(Transition* transition, int framesRemaining) = 0;
+    std::vector<Modifier*> _activeModifiers;
+    virtual void ModifierCallback(Modifier* modifier, int framesRemaining) = 0;
 
 };
 
@@ -79,7 +79,7 @@ public:
     ~STime();
 
     void Update();
-    virtual void TransitionCallback(Transition* transition, int framesRemaining);
+    virtual void ModifierCallback(Modifier* modifier, int framesRemaining);
 
 private:
     time_t*                             _t;

@@ -37,9 +37,11 @@ class PanelMode
 public:
     void Update();
     virtual ~PanelMode() = 0;
+    void AddModifier(Modifier* modifier);
 
 protected:
-    std::list<PanelSource*> _activeSources;    
+    std::vector<Modifier*> _activeModifiers;
+    std::vector<PanelSource*> _activeSources;    
     virtual void PanelSourceCallback(PanelSource* source, int framesRemaining) = 0;
     virtual void internalUpdate() = 0;
 };

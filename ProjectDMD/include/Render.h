@@ -33,7 +33,7 @@
 #include "../SYSTEMGLOBALS.h"
 #include "Error.h"
 #include "ResourceManager.h"
-#include "Transition.h"
+#include "Modifier.h"
 
 using namespace rgb_matrix;
 
@@ -57,7 +57,7 @@ public:
     static void																	        Clear() { _canvas->Clear(); }
 
     static void Text(
-        const std::vector<Transition*>  activeTransitions,
+        const std::vector<Modifier*>&   activeModifiers,
         std::string													        text,
         const DMDF*																			  font,
         std::tuple<int, int>				        origin,
@@ -66,7 +66,7 @@ public:
         int																					        horizontalSpacing = 0);
 
     static void Notification(
-        const std::vector<Transition*>  activeTransitions,
+        const std::vector<Modifier*>&   activeModifiers,
         std::string                     text,
         const DMDF*                     font,
         std::tuple<int, int>            origin,
@@ -74,15 +74,28 @@ public:
         TextJustification               justification = TextJustification::Left,
         int                             horizontalSpacing = 0);
 
+    static void ModifyPanel(
+        const std::vector<Modifier*>&   activeModifiers);
+
 private:
     static Canvas*														        _canvas;
+    static rgb_matrix::Color            _currentFrame[DISPLAY_WIDTH][DISPLAY_HEIGHT];
 
     static void setPixel(
-        rgb_matrix::Canvas*             canvas,
         int                             xPos,
         int                             yPos,
         const rgb_matrix::Color*        color,
-        const std::vector<Transition*>  activeTransitions);
+        const std::vector<Modifier*>&   activeModifiers);
+
+    static void setPixel(
+        int                             xPos,
+        int                             yPos,
+        const rgb_matrix::Color*        color);
+
+    static void modifyPixel(
+        int                             xPos,
+        int                             yPos,
+        const std::vector<Modifier*>&   activeModifiers);
 
     static std::tuple<int, int> getOriginAfterJustification(
         std::string													        text,

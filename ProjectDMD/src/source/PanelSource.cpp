@@ -13,9 +13,9 @@ PanelSource::~PanelSource()
     // calls pure virtual destructor
 }
 
-void PanelSource::AddTransition(Transition* transition)
+void PanelSource::AddModifier(Modifier* modifier)
 {
-    _activeTransitions.push_back(transition);
+    _activeModifiers.push_back(modifier);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

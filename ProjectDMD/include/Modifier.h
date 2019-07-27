@@ -28,13 +28,13 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// Transition
+// Modifier
 
-class Transition
+class Modifier
 {
 public:
     virtual void Modify(rgb_matrix::Color& color) const;
-    virtual void Transform(int& xOrigin, int& yOrigin) const;
+    virtual void Transform(std::tuple<int, int>& origin) const;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

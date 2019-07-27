@@ -63,7 +63,7 @@ STime::~STime()
     delete _t;
 }
 
-void STime::TransitionCallback(Transition* transition, int framesRemaining)
+void STime::ModifierCallback(Modifier* modifier, int framesRemaining)
 {
     return;
 }
@@ -71,7 +71,7 @@ void STime::TransitionCallback(Transition* transition, int framesRemaining)
 void STime::Update()
 {
     updateCurrentTime();
-    Render::Text(_activeTransitions, _currentTime, _font, _origin, _color, _justification, _horizontalTextSpacing);
+    Render::Text(_activeModifiers, _currentTime, _font, _origin, _color, _justification, _horizontalTextSpacing);
 }
 
 void STime::updateCurrentTime()

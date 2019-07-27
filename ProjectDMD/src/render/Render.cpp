@@ -7,6 +7,7 @@
 /* Statics */
 float Render::GlobalBrightness = 1.0f;
 Canvas* Render::_canvas;
+rgb_matrix::Color Render::_currentFrame[DISPLAY_WIDTH][DISPLAY_HEIGHT];
 
 ////////////////////////////////////////////////////////////////////////////////
 // Render
@@ -30,7 +31,7 @@ void Render::Initialize(int argc, char* argv[])
 }
 
 void Render::Text(
-    const std::vector<Transition*>  activeTransitions,
+    const std::vector<Modifier*>&   activeModifiers,
     std::string													        text,
     const DMDF*																			  font,
     std::tuple<int, int>				        origin,
@@ -42,11 +43,22 @@ void Render::Text(
     if (_canvas == NULL) { ErrorHandler::Log("Render", 
         "Canvas is null!", ErrorNum::FATAL_INVALID_CANVAS); }
     
-    std::tuple<int, int> currentRenderOrigin = getOriginAfterJustification(text, font, origin, horizontalSpacing, justification);;
+    // adjust for text justification
+    std::tuple<int, int> currentRenderOrigin = getOriginAfterJustification(text, font, origin, horizontalSpacing, justification);
+    
+    // apply modifier transforms
+    for (Modifier* modifier : activeModifiers) { modifier->Transform(currentRenderOrigin); }
+
+    // pre-load a color palette for the font color
     DMDColorPalette colorPalette(color);
 
+    bool beginText = false;
     for (char& character : text)
     {
+        // ignore whitespace prefix
+        if (!beginText && (character == ' ')) { continue; }
+        else if (!beginText) { beginText = true; }
+
         // get DMDFC
         character = toupper(character);
 
@@ -67,11 +79,10 @@ void Render::Text(
                         if (colorPalette.GetColor((*characterRaster)[col][row]) != NULL)
                         {
                             setPixel(
-                                _canvas,
                                 std::get<0>(currentRenderOrigin) + col,
                                 std::get<1>(currentRenderOrigin) + row,
                                 colorPalette.GetColor((*characterRaster)[col][row]),
-                                activeTransitions);
+                                activeModifiers);
                         }
                         else
                         {
@@ -103,7 +114,7 @@ void Render::Text(
 }
 
 void Render::Notification(
-    const std::vector<Transition*>  activeTransitions,
+    const std::vector<Modifier*>&   activeModifiers,
     std::string                     text,
     const DMDF*                     font,
     std::tuple<int, int>            origin,
@@ -115,13 +126,30 @@ void Render::Notification(
 
 }
 
+/* Apply activeModifiers to all pixels in the panel. NOTE: Transforms don't apply 
+to panel-wide modifiers */
+void Render::ModifyPanel(
+    const std::vector<Modifier*>&   activeModifiers
+)
+{
+    if (_canvas == NULL) { ErrorHandler::Log("Render", 
+        "Canvas is null!", ErrorNum::FATAL_INVALID_CANVAS); }
+
+    for (int y = 0; y < DISPLAY_HEIGHT; y++)
+    {
+        for (int x = 0; x < DISPLAY_WIDTH; x++)
+        {
+            modifyPixel(x, y, activeModifiers);
+        }
+    }
+}
+
 /* internal setPixel method, which automatically applies any active transitions and gloabl modifiers */
 void Render::setPixel(
-    rgb_matrix::Canvas*             canvas,
     int                             xPos,
     int                             yPos,
     const rgb_matrix::Color*        color,
-    const std::vector<Transition*>  activeTransitions
+    const std::vector<Modifier*>&   activeModifiers
 )
 {
     // apply active transition modifiers
@@ -129,16 +157,58 @@ void Render::setPixel(
     finalColor.r = color->r;
     finalColor.g = color->g;
     finalColor.b = color->b;
-    for (const Transition* transition : activeTransitions)
+    for (const Modifier* modifier : activeModifiers)
     {
-        transition->Modify(finalColor);
+        modifier->Modify(finalColor);
     }
 
     // apply global modifiers
-    canvas->SetPixel(xPos, yPos,
+    _canvas->SetPixel(xPos, yPos,
         (int)(finalColor.r * GlobalBrightness),
         (int)(finalColor.g * GlobalBrightness),
         (int)(finalColor.b * GlobalBrightness));
+
+    // store current frame data
+    _currentFrame[xPos][yPos].r = (int)(finalColor.r * GlobalBrightness);
+    _currentFrame[xPos][yPos].g = (int)(finalColor.g * GlobalBrightness);
+    _currentFrame[xPos][yPos].b = (int)(finalColor.b * GlobalBrightness);
+}
+
+/* internal setPixel method, which automatically applies any active transitions and gloabl modifiers */
+void Render::setPixel(
+    int                             xPos,
+    int                             yPos,
+    const rgb_matrix::Color*        color
+)
+{
+    // apply global modifiers
+    _canvas->SetPixel(xPos, yPos,
+        (int)(color->r * GlobalBrightness),
+        (int)(color->g * GlobalBrightness),
+        (int)(color->b * GlobalBrightness));
+
+    // store current frame data
+    _currentFrame[xPos][yPos].r = (int)(color->r * GlobalBrightness);
+    _currentFrame[xPos][yPos].g = (int)(color->g * GlobalBrightness);
+    _currentFrame[xPos][yPos].b = (int)(color->b * GlobalBrightness);
+}
+
+/* Apply modifiers to the pixel at <xPos,yPos> */
+void Render::modifyPixel(
+    int                             xPos,
+    int                             yPos,
+    const std::vector<Modifier*>&   activeModifiers
+)
+{
+    rgb_matrix::Color finalColor;
+    finalColor.r = _currentFrame[xPos][yPos].r;
+    finalColor.g = _currentFrame[xPos][yPos].g;
+    finalColor.b = _currentFrame[xPos][yPos].b;
+    for (Modifier* modifier : activeModifiers)
+    {
+        modifier->Modify(finalColor);
+    }
+    _canvas->SetPixel(xPos, yPos, finalColor.r, finalColor.g, finalColor.b);
 }
 
 /* Determines where to begin rendering based on selected Justification and text length */
