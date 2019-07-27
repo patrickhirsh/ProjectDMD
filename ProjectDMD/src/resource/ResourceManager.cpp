@@ -16,8 +16,6 @@ std::map<std::string, DMDF*>* ResourceManager::_fonts = new std::map<std::string
 /* Constants*/
 const std::string DMDF_PATH_BASE = "./resources/fonts/dmdf";
 
-
-/* initialize all resources. Should be called on startup before any rendering is done*/
 void ResourceManager::Initialize()
 {
     // Initialize system global resources
@@ -48,7 +46,6 @@ void ResourceManager::Initialize()
 #endif
 }
 
-/* Get font by font name (includes file extension) */
 const DMDF* ResourceManager::GetFont(std::string fontName)
 {
     if (_fonts->find(fontName) != _fonts->end()) { return (*_fonts)[fontName]; }
@@ -61,13 +58,11 @@ const DMDF* ResourceManager::GetFont(std::string fontName)
     }
 }
 
-/* Sets the system color palette */
 void ResourceManager::SetSystemColorPalette(rgb_matrix::Color color)
 {
     _systemColorPalette = new DMDColorPalette(color);
 }
 
-/* Sets the system font */
 bool ResourceManager::SetSystemFont(std::string fontName)
 {
     if (ResourceManager::GetFont(fontName) != NULL)

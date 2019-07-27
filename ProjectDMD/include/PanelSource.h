@@ -34,17 +34,30 @@
 ////////////////////////////////////////////////////////////////////////////////
 // PanelSource
 
+/* a PanelSource represents an "object" that can be drawn to the panel.
+PanelSources handle triggering render calls to update these objects as
+well as react to modifiers applied to them. 
+
+To keep iterations down, modifiers need to be applied DURING all render 
+calls. For this reason, it is the responsibility of each source to apply 
+these modifiers to each render call. */
 class PanelSource
 {
 public:
-    virtual void Update() = 0;
-    virtual ~PanelSource() = 0;
+    /* applies a modifier to this source. */
     void AddModifier(Modifier* modifier);
 
-protected:
-    std::vector<Modifier*> _activeModifiers;
-    virtual void ModifierCallback(Modifier* modifier, int framesRemaining) = 0;
+    /* called once per frame. */
+    virtual void Update() = 0;
+    
+    /* virtual destructor. */
+    virtual ~PanelSource();
 
+protected:
+    /* while PanelMode *does* create theses modifiers and mutate this modifiers 
+    vector, if this PanelSource is destroyed, this PanelSource is responsible 
+    for cleaning up its remaining _activeModifiers. */
+    std::vector<Modifier*> _activeModifiers;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -53,9 +66,15 @@ protected:
 ////////////////////////////////////////////////////////////////////////////////
 // SOURCE: Time
 
+/* a simple clock source used to display the current time. */
 class STime : public PanelSource
 {
 public:
+
+    /* specifies the time format of this clock. "Period" indicates the displaying
+    of AM/PM, and "Period_Dot" indicates the use of a dot to represent "PM" instead
+    of displaying the period in plain text. HH = hours. MM = minutes. SS = seconds.
+    12 = 12 hour time. 24 = 24 hour time. */
     enum TimeFormat
     {
         HH_MM_12,
@@ -68,6 +87,9 @@ public:
         HH_MM_SS_24
     };
 
+    /* create a clock source at "origin" (a point fixed at the upper left/right/center-most
+    point in the source object, depending on "justification") in "timeFormat" using "timeFont"
+    and renderd in "timeColor" with characters spaced every "horizontalTextSpacing" pixels. */
     STime(
         std::tuple<int, int>            origin,
         STime::TimeFormat               timeFormat = STime::TimeFormat::HH_MM_12_PERIOD,
@@ -79,7 +101,6 @@ public:
     ~STime();
 
     void Update();
-    virtual void ModifierCallback(Modifier* modifier, int framesRemaining);
 
 private:
     time_t*                             _t;

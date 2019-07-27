@@ -7,13 +7,11 @@
 /* Statics */
 float Render::GlobalBrightness = 1.0f;
 Canvas* Render::_canvas;
-rgb_matrix::Color Render::_currentFrame[DISPLAY_WIDTH][DISPLAY_HEIGHT];
+rgb_matrix::Color Render::_currentFrame[PANEL_WIDTH*PANEL_COUNT_X][PANEL_HEIGHT*PANEL_COUNT_Y];
 
 ////////////////////////////////////////////////////////////////////////////////
 // Render
 
-/* Initializes the panel canvas using application arguments. Render should be
-initialized before any other systems. */
 void Render::Initialize(int argc, char* argv[])
 {
     // define matrix options
@@ -30,6 +28,32 @@ void Render::Initialize(int argc, char* argv[])
         "Couldn't create canvas (are runtime arguments valid?)", ErrorNum::FATAL_INVALID_CANVAS); }
 }
 
+int Render::GetDisplayWidth()
+{
+    if (_canvas == NULL) { ErrorHandler::Log("Render", "Canvas is null!", ErrorNum::FATAL_INVALID_CANVAS); return -1; }
+    else { return (_canvas->width()); }
+}
+
+int Render::GetDisplayHeight()
+{
+    if (_canvas == NULL) { ErrorHandler::Log("Render", "Canvas is null!", ErrorNum::FATAL_INVALID_CANVAS); return -1; }
+    else { return (_canvas->height()); }
+}
+
+void Render::Clear()
+{
+    _canvas->Clear();
+    for (int y = 0; y < _canvas->height(); y++)
+    {
+        for (int x = 0; x < _canvas->width(); x++)
+        {
+            _currentFrame[x][y].r = 0;
+            _currentFrame[x][y].g = 0;
+            _currentFrame[x][y].b = 0;
+        }
+    }
+}
+
 void Render::Text(
     const std::vector<Modifier*>&   activeModifiers,
     std::string													        text,
@@ -40,8 +64,7 @@ void Render::Text(
     int																					        horizontalSpacing
 )
 {
-    if (_canvas == NULL) { ErrorHandler::Log("Render", 
-        "Canvas is null!", ErrorNum::FATAL_INVALID_CANVAS); }
+    if (_canvas == NULL) { ErrorHandler::Log("Render", "Canvas is null!", ErrorNum::FATAL_INVALID_CANVAS); }
     
     // adjust for text justification
     std::tuple<int, int> currentRenderOrigin = getOriginAfterJustification(text, font, origin, horizontalSpacing, justification);
@@ -52,13 +75,8 @@ void Render::Text(
     // pre-load a color palette for the font color
     DMDColorPalette colorPalette(color);
 
-    bool beginText = false;
     for (char& character : text)
     {
-        // ignore whitespace prefix
-        if (!beginText && (character == ' ')) { continue; }
-        else if (!beginText) { beginText = true; }
-
         // get DMDFC
         character = toupper(character);
 
@@ -126,25 +144,21 @@ void Render::Notification(
 
 }
 
-/* Apply activeModifiers to all pixels in the panel. NOTE: Transforms don't apply 
-to panel-wide modifiers */
 void Render::ModifyPanel(
     const std::vector<Modifier*>&   activeModifiers
 )
 {
-    if (_canvas == NULL) { ErrorHandler::Log("Render", 
-        "Canvas is null!", ErrorNum::FATAL_INVALID_CANVAS); }
+    if (_canvas == NULL) { ErrorHandler::Log("Render", "Canvas is null!", ErrorNum::FATAL_INVALID_CANVAS); }
 
-    for (int y = 0; y < DISPLAY_HEIGHT; y++)
+    for (int y = 0; y < _canvas->height(); y++)
     {
-        for (int x = 0; x < DISPLAY_WIDTH; x++)
+        for (int x = 0; x < _canvas->width(); x++)
         {
             modifyPixel(x, y, activeModifiers);
         }
     }
 }
 
-/* internal setPixel method, which automatically applies any active transitions and gloabl modifiers */
 void Render::setPixel(
     int                             xPos,
     int                             yPos,
@@ -174,7 +188,6 @@ void Render::setPixel(
     _currentFrame[xPos][yPos].b = (int)(finalColor.b * GlobalBrightness);
 }
 
-/* internal setPixel method, which automatically applies any active transitions and gloabl modifiers */
 void Render::setPixel(
     int                             xPos,
     int                             yPos,
@@ -193,7 +206,6 @@ void Render::setPixel(
     _currentFrame[xPos][yPos].b = (int)(color->b * GlobalBrightness);
 }
 
-/* Apply modifiers to the pixel at <xPos,yPos> */
 void Render::modifyPixel(
     int                             xPos,
     int                             yPos,
@@ -211,7 +223,6 @@ void Render::modifyPixel(
     _canvas->SetPixel(xPos, yPos, finalColor.r, finalColor.g, finalColor.b);
 }
 
-/* Determines where to begin rendering based on selected Justification and text length */
 std::tuple<int, int> Render::getOriginAfterJustification(
     std::string													        text,
     const DMDF*																			  font,
@@ -239,7 +250,6 @@ std::tuple<int, int> Render::getOriginAfterJustification(
     }
 }
 
-/* Get the total width of "text" rendered in "font" with "horizontalSpacing" */
 int Render::getTextWidth(
     std::string													        text,
     const DMDF*																			  font,

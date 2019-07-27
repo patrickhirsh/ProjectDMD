@@ -34,6 +34,11 @@ void MClock::PanelSourceCallback(PanelSource* source, int framesRemaining)
     return;
 }
 
+void MClock::ModifierCallback(Modifier* modifier, int framesRemaining)
+{
+    return;
+}
+
 void MClock::internalUpdate()
 {
     return;

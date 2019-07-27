@@ -52,13 +52,17 @@ class DMDColorPalette;
 class ResourceManager
 {
 public:
+    /* initialize all resources. Should be called on startup before any rendering is done */
     static void Initialize();
+
+    /* get font by font name (includes file extension) */
     static const DMDF* GetFont(std::string fontName);
 
-    static void SetSystemColorPalette(rgb_matrix::Color color);
-    static bool SetSystemFont(std::string fontName);
-    static const DMDColorPalette* GetSystemColorPalette();
-    static const DMDF* GetSystemFont();
+    /* system resources*/
+    static void SetSystemColorPalette(rgb_matrix::Color color);     // set the system color palette
+    static bool SetSystemFont(std::string fontName);                // set the system font
+    static const DMDColorPalette* GetSystemColorPalette();          // get the system color palette
+    static const DMDF* GetSystemFont();                             // get the system font
 
 private:
     static DMDColorPalette*																									_systemColorPalette;
@@ -72,15 +76,30 @@ private:
 ////////////////////////////////////////////////////////////////////////////////
 // DMDFont
 
+/* Represents a special kind of font that utilizes 0-15 pixel intensity in mono
+colorspace. These fonts are generated with the PinExporter tool and packaged
+to be as small on disk/in memory as possible */
 class DMDF
 {
 public:
+    /* Create a new DMDF based on a .dmdf file */
     DMDF(std::string file);
     DMDF(const DMDF* fontToCopy);
+
+    /* Get this DMDF character's raster */
     const DMDFC* GetCharacter(const char c) const;
+
+    /* Get the string name of this DMDF */
     const std::string GetName() const;
+
+    /* Get the number of characters in this DMDF */
     int GetCount() const;
+
+    /* DMDF fonts are required to have a uniform raster height */
     int GetFontHeight() const;
+
+    /* DMDFs remain unloaded if the constructor fails to load the font. (non-uniform
+    character height, invalid characters, invalid dmdf file, etc..) */
     bool IsLoaded() const;
 
 private:

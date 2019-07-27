@@ -63,11 +63,6 @@ STime::~STime()
     delete _t;
 }
 
-void STime::ModifierCallback(Modifier* modifier, int framesRemaining)
-{
-    return;
-}
-
 void STime::Update()
 {
     updateCurrentTime();

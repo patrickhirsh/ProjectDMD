@@ -27,6 +27,11 @@
 #include "ResourceManager.h"
 #include "Render.h"
 
+
+////////////////////////////////////////////////////////////////////////////////
+// Error
+
+/* short error number used to identify the origin of an error. */
 enum ErrorNum
 {
     // FATAL (0-499)
@@ -44,10 +49,15 @@ enum ErrorNum
     WARNING_INVALID_STERN_COLOR_VAL = 1001,
 };
 
+/* handles logging of errors, warnings, and fatal errors. */
 class ErrorHandler
 {
 public:
+    /* log an error originating from "source" with "reason" and "errorNumber".
+    Fatal errors halt the program and display on-screen. */
     static void					Log(std::string source, std::string reason, ErrorNum errorNumber);
+
+    /* error / warning stats. */
     static int						GetErrorCount() { return _errorCount; }
     static int						GetWarningCount() { return _warningCount; }
 
@@ -55,3 +65,5 @@ private:
     static int						_errorCount;
     static int						_warningCount;
 };
+
+////////////////////////////////////////////////////////////////////////////////

@@ -24,8 +24,6 @@ void PanelMode::Update()
     {
         Render::ModifyPanel(_activeModifiers);
     }
-
-    // TODO: Notif and other universal source updates go here...
 }
 
 PanelMode::~PanelMode()

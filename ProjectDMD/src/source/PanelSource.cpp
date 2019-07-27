@@ -10,7 +10,7 @@
 
 PanelSource::~PanelSource()
 {
-    // calls pure virtual destructor
+    for (Modifier* modifier : _activeModifiers) { delete modifier; }
 }
 
 void PanelSource::AddModifier(Modifier* modifier)

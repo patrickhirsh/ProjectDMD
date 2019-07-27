@@ -42,9 +42,12 @@ int PanelManager::Run(int argc, char* argv[])
         // refresh the current mode
         _panelModes[_currentMode]->Update();
 
-        // lock frames at 20/s
+        /* limit actual content refresh to a fixed framerate to prevent unecessary 
+        memory churning. The panel still scans at a much higher frequency, but constantly
+        ticking this update loop is avoided to keep panel scan rate optimal. See
+        REFRESH_DELAY_MS in SYSTEMGLOBALS for more info. */
 #if __linux__
-        usleep(50000);
+        usleep(REFRESH_DELAY_MS);
 #endif 
     }
 
@@ -65,7 +68,7 @@ void PanelManager::initializeModes()
     _panelModes.empty();
 
     _panelModes[Mode::BasicClock] = new MClock(
-        std::tuple<int, int>(DISPLAY_WIDTH / 2, ((DISPLAY_HEIGHT / 2) - (ResourceManager::GetFont("StarTrek_20.dmdf")->GetFontHeight() / 2))),
+        std::tuple<int, int>(Render::GetDisplayWidth() / 2, ((Render::GetDisplayHeight() / 2) - (ResourceManager::GetFont("StarTrek_20.dmdf")->GetFontHeight() / 2))),
         STime::HH_MM_SS_12_PERIOD,
         Render::TextJustification::Center,
         0,

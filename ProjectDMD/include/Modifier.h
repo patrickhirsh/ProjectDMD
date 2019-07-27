@@ -33,8 +33,15 @@
 class Modifier
 {
 public:
+    Modifier();
+    virtual ~Modifier();
+
+    /* Augments the values of color based on this Modifier's defined behavior. */
     virtual void Modify(rgb_matrix::Color& color) const;
+
+    /* adjusts the position of a render object's origin based on this Modifier's defined behavior. */
     virtual void Transform(std::tuple<int, int>& origin) const;
+
 };
 
 ////////////////////////////////////////////////////////////////////////////////

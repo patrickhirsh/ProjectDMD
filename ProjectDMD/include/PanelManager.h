@@ -41,6 +41,12 @@
 #include "ResourceManager.h"
 
 
+////////////////////////////////////////////////////////////////////////////////
+// PanelManager
+
+/* Responsible for updating the panel as well as listening for signals to change
+mode / shut down the panel. Manages all PanelModes and initializes all systems
+upon startup. */
 class PanelManager
 {
 public:
@@ -51,6 +57,7 @@ public:
         BasicClock
     };
 
+    /* initialize all systems, run startup, and enter the main update loop. */
     static int Run(int argc, char *argv[]);
 
 private:
@@ -59,3 +66,5 @@ private:
     static void initializeSystems(int argc, char *argv[]);
     static void initializeModes();
 };
+
+////////////////////////////////////////////////////////////////////////////////
