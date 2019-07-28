@@ -17,7 +17,7 @@ STime::STime(
     const DMDF*                     timeFont
 )
 {
-    this->_origin = origin;
+    this->Origin = origin;
     this->_format = timeFormat;
     this->_justification = justification;
     this->_horizontalTextSpacing = horizontalTextSpacing;
@@ -66,7 +66,7 @@ STime::~STime()
 void STime::Update()
 {
     updateCurrentTime();
-    Render::Text(_currentTime, _font, _origin, _color, 1.0f, _justification, _horizontalTextSpacing);
+    Render::Text(_currentTime, _font, Origin, _color, 1.0f, _justification, _horizontalTextSpacing);
 }
 
 void STime::updateCurrentTime()

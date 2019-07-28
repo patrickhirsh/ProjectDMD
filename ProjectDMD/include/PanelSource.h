@@ -40,6 +40,8 @@ public:
     /* Should this source be rendered? */
     bool IsActive = true;
 
+    std::tuple<int, int> Origin;
+
     /* called once per frame. */
     virtual void Update() = 0;
     
@@ -94,7 +96,6 @@ private:
     struct tm                           _tm;
     char                                _timeBuffer[256];
     char                                _currentTime[256];
-    std::tuple<int, int>                _origin;
     TimeFormat                          _format;
     Render::TextJustification           _justification;
     int                                 _horizontalTextSpacing;

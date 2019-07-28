@@ -31,6 +31,8 @@ int PanelManager::Run(int argc, char* argv[])
     initializeSystems(argc, argv);
     initializeModes();
 
+    ErrorHandler::Log("Test", "This is a test", ErrorNum::FATAL_INVALID_CANVAS);
+
     // panel refresh loop
     while (!interrupt_received)
     {

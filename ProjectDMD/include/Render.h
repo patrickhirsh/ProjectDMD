@@ -80,9 +80,9 @@ public:
         std::string                     text,                                       // the text to render (leading whitespace ignored)
         const DMDF*                     font,                                       // the font used to render the text
         std::tuple<int, int>            origin,                                     // top left/right/center-most point at which to begin the render (depending on justification)
-        rgb_matrix::Color               color,                                      // color to render the text in
+        const rgb_matrix::Color*        color,                                      // color to render the text in
         float                           opacity,                                    // opacity to render this text at
-        TextJustification               justification = TextJustification::Left,    // render text leftward/rightward/outward from the origin
+        TextJustification               justification = TextJustification::Left,    // render text and box leftward/rightward/outward from the origin
         int                             horizontalSpacing = 0,                      // number of pixels to skip between characters
         int                             outlineSpacing = 1);                        // buffer space between text and notif box
 

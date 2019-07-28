@@ -21,6 +21,29 @@ void ErrorHandler::Log(std::string source, std::string reason, ErrorNum errorNum
     if (errorNumber < 500)
     {
         printf("[%d] FATAL ERROR [%s]: %s\n", (int)errorNumber, source.c_str(), reason.c_str());
+        std::ostringstream oss;
+        oss << "FATAL ERROR [" << (int)errorNumber << "]";
+        Render::Clear();
+        Render::Notification(
+            oss.str(),
+            ResourceManager::GetSystemFont(),
+            std::tuple<int, int>((PANEL_WIDTH*PANEL_COUNT_X) / 2, (((PANEL_HEIGHT*PANEL_COUNT_Y) / 2) - (ResourceManager::GetSystemFont()->GetFontHeight() / 2))),
+            ResourceManager::GetSystemColorPalette()->GetColor(15),
+            1.0f,
+            Render::TextJustification::Center,
+            1,
+            2);
+        Render::FinalizeFrame();
+        
+        // halt program before exit
+        printf("\n");
+        printf("Press any key to exit...\n");
+        printf("\n");
+        while (std::cin.get() != '\n')
+        {
+            // wait..
+        }
+        exit(EXIT_FAILURE);
     }
 
     // ERROR

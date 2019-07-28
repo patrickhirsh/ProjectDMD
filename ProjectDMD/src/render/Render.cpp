@@ -55,6 +55,7 @@ float Render::GetGlobalBrightness()
 
 void Render::SetGlobalBrightness(float brightness)
 {
+    // brightness must be between 0.0f and 1.0f
     if (brightness > 1.0f)
     {
         _globalBrightness = 1.0f;
@@ -192,7 +193,7 @@ void Render::Notification(
     std::string                     text,
     const DMDF*                     font,
     std::tuple<int, int>            origin,
-    rgb_matrix::Color               color,
+    const rgb_matrix::Color*        color,
     float                           opacity,
     TextJustification               justification,
     int                             horizontalSpacing,
@@ -203,13 +204,10 @@ void Render::Notification(
     if (opacity > 1.0f) { opacity = 1.0f; }
     if (opacity <= 0.0f) { return; }
 
-    // notif box is rendered outlineSpacing + 1 pixels outside text (move text origin inward)
-    std::tuple<int, int> textOrigin(
-        std::get<0>(origin) + outlineSpacing + 1, 
-        std::get<1>(origin) + outlineSpacing + 1);
-
     // text performs these for us, but we need to apply justification to box as well.
     std::tuple<int, int> boxOrigin = getOriginAfterJustification(text, font, origin, horizontalSpacing, justification);
+    std::get<0>(boxOrigin) -= (outlineSpacing + 1);
+    std::get<1>(boxOrigin) -= (outlineSpacing + 1);
 
     // render notification box
     int boxWidth = getTextWidth(text, font, horizontalSpacing) + (outlineSpacing * 2) + 2;
@@ -228,14 +226,19 @@ void Render::Notification(
             // don't do unecessary opacity computations
             if (opacity == 1.0f)
             {
-                setPixel(x, y, drawBoarder ? colorPalette.GetColor(15) : colorPalette.GetColor(0));
+                if (drawBoarder) { setPixel(x, y, colorPalette.GetColor(15)); }
+                else { setPixel(x, y, colorPalette.GetColor(0)); }
             }
             else
             {
-                setPixel(x, y, drawBoarder ? colorPalette.GetColor(15) : colorPalette.GetColor(0), opacity);
+                if (drawBoarder) { setPixel(x, y, colorPalette.GetColor(15)); }
+                else { setPixel(x, y, colorPalette.GetColor(0)); }
             }
         }
     }
+
+    // render notification text
+    Text(text, font, origin, color, opacity, justification, horizontalSpacing);
 }
 
 void Render::setPixel(

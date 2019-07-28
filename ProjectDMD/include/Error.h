@@ -20,6 +20,7 @@
 #include <iostream>
 #include <locale>
 #include <map>
+#include <sstream>
 #include <vector>
 
 // Local
