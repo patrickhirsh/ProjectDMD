@@ -33,7 +33,6 @@
 #include "../SYSTEMGLOBALS.h"
 #include "Error.h"
 #include "ResourceManager.h"
-#include "Modifier.h"
 
 using namespace rgb_matrix;
 
@@ -51,70 +50,64 @@ public:
         Right
     };
 
-    /* Render globals */
-    static float																        GlobalBrightness;
-
-    /* Initializes the panel canvas using application arguments. Render should be 
+    /* initializes the panel canvas using application arguments. Render should be 
     initialized before any other systems. */
     static void																	        Initialize(int argc, char* argv[]);
 
-    static void																         Clear();
+    /* renders the current frame to the panel */
+    static void                         FinalizeFrame();
+
+    /* scales the brightness of the entire panel (between 0.0f and 1.0f). */
+    static float                        GetGlobalBrightness();
+    static void                         SetGlobalBrightness(float brightness);
+
     static int                          GetDisplayWidth();
     static int                          GetDisplayHeight();
+    static void																         Clear();
 
-    /* Renders text to the panel. */
+    /* renders text to the panel. */
     static void Text(
-        const std::vector<Modifier*>&   activeModifiers,                            // modifiers to be applied to the render
         std::string													        text,                                       // the text to render
         const DMDF*																			  font,                                       // the font used to render the text
         std::tuple<int, int>				        origin,                                     // top left/right/center-most point at which to begin the render (depending on justification)
         const rgb_matrix::Color*							 color,                                      // color to render the text in
+        float                           opactity,                                   // opacity to render this text at
         TextJustification							        justification = TextJustification::Left,    // render text leftward/rightward/outward from the origin
         int																					        horizontalSpacing = 0);                     // number of pixels to skip between characters
 
-    /* Renders a notification in a notification box. */
+    /* renders a notification in a notification box. */
     static void Notification(
-        const std::vector<Modifier*>&   activeModifiers,                            // modifiers to be applied to the render
         std::string                     text,                                       // the text to render (leading whitespace ignored)
         const DMDF*                     font,                                       // the font used to render the text
         std::tuple<int, int>            origin,                                     // top left/right/center-most point at which to begin the render (depending on justification)
         rgb_matrix::Color               color,                                      // color to render the text in
+        float                           opacity,                                    // opacity to render this text at
         TextJustification               justification = TextJustification::Left,    // render text leftward/rightward/outward from the origin
-        int                             horizontalSpacing = 0);                     // number of pixels to skip between characters
-
-    /* Applies the activeModifiers to the entire panel. NOTE: Modifier transforms 
-    do not apply here. */
-    static void ModifyPanel(
-        const std::vector<Modifier*>&   activeModifiers);
+        int                             horizontalSpacing = 0,                      // number of pixels to skip between characters
+        int                             outlineSpacing = 1);                        // buffer space between text and notif box
 
 private:
     static Canvas*														        _canvas;
+    static float                        _globalBrightness;
 
-    /* Store the state of the canvas per-frame so we can get current pixel data to 
-    perform post-update full-panel modifiers. */
-    static rgb_matrix::Color            _currentFrame[PANEL_WIDTH*PANEL_COUNT_X][PANEL_HEIGHT*PANEL_COUNT_Y];
+    /* all render calls per-frame mutate this canvas prior to drawing to the panel */
+    static rgb_matrix::Color*           _currentFrame[PANEL_WIDTH*PANEL_COUNT_X][PANEL_HEIGHT*PANEL_COUNT_Y];
 
-    /* internal setPixel method, which automatically applies any active transitions 
-    and gloabl modifiers as well as updates the _currentFrame. */
-    static void setPixel(
-        int                             xPos,
-        int                             yPos,
-        const rgb_matrix::Color*        color,
-        const std::vector<Modifier*>&   activeModifiers);
-
-    /* internal setPixel that doesn't require any activeModifiers be provided. */
+    /* sets the pixel at <xPos,yPos> in _currentFrame to "color" */
     static void setPixel(
         int                             xPos,
         int                             yPos,
         const rgb_matrix::Color*        color);
 
-    /* Apply modifiers to the pixel at <xPos,yPos> */
-    static void modifyPixel(
+    /* sets the pixel at <xPos,yPos> in _currentFrame to "color" with "opacity".
+    Opacity should be a value between 0.0f and 1.0f. */
+    static void setPixel(
         int                             xPos,
         int                             yPos,
-        const std::vector<Modifier*>&   activeModifiers);
+        const rgb_matrix::Color*        color,
+        float                           opacity);
 
-    /* Determines where to begin rendering based on selected Justification and text length */
+    /* determines where to begin rendering based on selected Justification and text length */
     static std::tuple<int, int> getOriginAfterJustification(
         std::string													        text,
         const DMDF*																			  font,
@@ -122,7 +115,7 @@ private:
         int																					        horizontalSpacing,
         TextJustification							        justification);
 
-    /* Get the total width of "text" rendered in "font" with "horizontalSpacing" */
+    /* get the total width of "text" rendered in "font" with "horizontalSpacing" */
     static int getTextWidth(
         std::string													        text,
         const DMDF*																			  font,

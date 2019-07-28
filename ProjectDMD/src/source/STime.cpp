@@ -66,15 +66,32 @@ STime::~STime()
 void STime::Update()
 {
     updateCurrentTime();
-    Render::Text(_activeModifiers, _currentTime, _font, _origin, _color, _justification, _horizontalTextSpacing);
+    Render::Text(_currentTime, _font, _origin, _color, 1.0f, _justification, _horizontalTextSpacing);
 }
 
 void STime::updateCurrentTime()
 {
 #if __linux__
+    // get local time
     time(_t);
     localtime_r(_t, &_tm);
-    strftime(_currentTime, sizeof(_currentTime), _formatInternal, &_tm);
+    int rawCount = strftime(_timeBuffer, sizeof(_currentTime), _formatInternal, &_tm);
+
+    // write to _currentTime (ignore first leading ' ' if applicable)
+    if (rawCount > 0)
+    {
+        char* bufferIndex = &_timeBuffer[0];
+        if (_timeBuffer[0] == ' ') { bufferIndex++; rawCount--; }
+        int i = 0;
+        while (i < rawCount)
+        {
+            _currentTime[i] = *bufferIndex;
+            bufferIndex++;
+            i++;
+        }
+        // _timeBuffer out string doesn't include null terminator in rawCount
+        _currentTime[i] = '\0';
+    }
 #endif
 }
 

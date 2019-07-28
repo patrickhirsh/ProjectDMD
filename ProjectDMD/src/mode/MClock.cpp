@@ -18,25 +18,15 @@ MClock::MClock(
 )
 {
     STime* Clock = new STime(origin, timeFormat, justification, horizontalTextSpacing, timeColor, timeFont);
-    _activeSources.push_back(Clock);
+    _sources.push_back(Clock);
 }
 
 MClock::~MClock()
 {
-    for (PanelSource* source : _activeSources)
+    for (PanelSource* source : _sources)
     {
         delete source;
     }
-}
-
-void MClock::PanelSourceCallback(PanelSource* source, int framesRemaining)
-{
-    return;
-}
-
-void MClock::ModifierCallback(Modifier* modifier, int framesRemaining)
-{
-    return;
 }
 
 void MClock::internalUpdate()

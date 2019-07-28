@@ -31,16 +31,17 @@ int PanelManager::Run(int argc, char* argv[])
     initializeSystems(argc, argv);
     initializeModes();
 
-    Render::GlobalBrightness = 1.0f;
-
     // panel refresh loop
     while (!interrupt_received)
     {
-        // clear canvas each frame update
+        // clear current frame and canvas
         Render::Clear();
 
-        // refresh the current mode
+        // refresh the current mode (renders to current frame)
         _panelModes[_currentMode]->Update();
+
+        // draw current frame to the panel
+        Render::FinalizeFrame();
 
         /* limit actual content refresh to a fixed framerate to prevent unecessary 
         memory churning. The panel still scans at a much higher frequency, but constantly

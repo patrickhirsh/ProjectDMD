@@ -7,6 +7,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 // ProjectDMD
 
+/*  Object Prefix Conventions
+
+  S: PanelSource
+  M: PanelMode
+
+*/
+
 int main(int argc, char* argv[])
 {
     return PanelManager::Run(argc, argv);

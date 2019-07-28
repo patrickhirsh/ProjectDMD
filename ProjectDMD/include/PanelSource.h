@@ -28,36 +28,23 @@
 #include "Error.h"
 #include "Render.h"
 #include "ResourceManager.h"
-#include "Modifier.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // PanelSource
 
-/* a PanelSource represents an "object" that can be drawn to the panel.
-PanelSources handle triggering render calls to update these objects as
-well as react to modifiers applied to them. 
 
-To keep iterations down, modifiers need to be applied DURING all render 
-calls. For this reason, it is the responsibility of each source to apply 
-these modifiers to each render call. */
 class PanelSource
 {
 public:
-    /* applies a modifier to this source. */
-    void AddModifier(Modifier* modifier);
+    /* Should this source be rendered? */
+    bool IsActive = true;
 
     /* called once per frame. */
     virtual void Update() = 0;
     
     /* virtual destructor. */
     virtual ~PanelSource();
-
-protected:
-    /* while PanelMode *does* create theses modifiers and mutate this modifiers 
-    vector, if this PanelSource is destroyed, this PanelSource is responsible 
-    for cleaning up its remaining _activeModifiers. */
-    std::vector<Modifier*> _activeModifiers;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -105,6 +92,7 @@ public:
 private:
     time_t*                             _t;
     struct tm                           _tm;
+    char                                _timeBuffer[256];
     char                                _currentTime[256];
     std::tuple<int, int>                _origin;
     TimeFormat                          _format;

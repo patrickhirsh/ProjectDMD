@@ -14,8 +14,7 @@ SRC_UTILITY = $(wildcard src/utility/*.cpp)
 SRC_OBJECT = $(wildcard src/object/*.cpp)
 SRC_RENDER = $(wildcard src/render/*.cpp)
 SRC_MODE = $(wildcard src/mode/*.cpp)
-SRC_MODIFIER = $(wildcard src/modifier/*.cpp)
-SRC = $(SRC_BASE) $(SRC_SOURCES) $(SRC_UTILITY) $(SRC_RESOURCE) $(SRC_OBJECT) $(SRC_RENDER) $(SRC_MODE) $(SRC_MODIFIER)
+SRC = $(SRC_BASE) $(SRC_SOURCES) $(SRC_UTILITY) $(SRC_RESOURCE) $(SRC_OBJECT) $(SRC_RENDER) $(SRC_MODE)
 TMP := $(subst src/,obj/,$(SRC))
 OBJ := $(subst .cpp,.o,$(TMP))
 
@@ -42,6 +41,9 @@ clean:
 	rm -f $(OBJ) ProjectDMD
 
 run:
+	sudo ./ProjectDMD --led-pwm-lsb-nanoseconds=50 --led-pwm-dither-bits=2
+
+run-debug:
 	sudo ./ProjectDMD --led-show-refresh --led-pwm-lsb-nanoseconds=50 --led-pwm-dither-bits=2
 
 
@@ -54,4 +56,4 @@ obj/%.o: src/%.cpp
 
 
 ######################################################################
-.PHONY: clean, run
+.PHONY: clean, run, run-debug

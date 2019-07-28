@@ -10,12 +10,7 @@
 
 PanelSource::~PanelSource()
 {
-    for (Modifier* modifier : _activeModifiers) { delete modifier; }
-}
-
-void PanelSource::AddModifier(Modifier* modifier)
-{
-    _activeModifiers.push_back(modifier);
+    return;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

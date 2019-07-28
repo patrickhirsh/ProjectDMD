@@ -47,6 +47,7 @@ enum ErrorNum
     // WARNING (1000+)
     WARNING_UNSUPPORTED_CHARACTER = 1000,
     WARNING_INVALID_STERN_COLOR_VAL = 1001,
+    WARNING_INVALID_RENDER_GLOBAL = 1002,
 };
 
 /* handles logging of errors, warnings, and fatal errors. */
