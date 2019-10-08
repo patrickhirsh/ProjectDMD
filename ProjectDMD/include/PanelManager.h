@@ -54,6 +54,7 @@ public:
     /* Master Panel Mode List */
     enum Mode
     {
+		PanelTest,
         BasicClock
     };
 

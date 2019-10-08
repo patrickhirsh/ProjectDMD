@@ -67,7 +67,12 @@ void PanelManager::initializeSystems(int argc, char *argv[])
 void PanelManager::initializeModes()
 {
     _panelModes.empty();
+	_currentMode = Mode::PanelTest;
 
+	/* Panel Test */
+	_panelModes[Mode::PanelTest] = new MPanelTest();
+
+	/* Basic Clock */
     _panelModes[Mode::BasicClock] = new MClock(
         std::tuple<int, int>(Render::GetDisplayWidth() / 2, ((Render::GetDisplayHeight() / 2) - (ResourceManager::GetFont("StarTrek_20.dmdf")->GetFontHeight() / 2))),
         STime::HH_MM_SS_12_PERIOD,
@@ -76,8 +81,6 @@ void PanelManager::initializeModes()
         ResourceManager::GetSystemColorPalette()->GetColor(15),
         ResourceManager::GetFont("StarTrek_20.dmdf")
     );
-
-    _currentMode = Mode::BasicClock;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

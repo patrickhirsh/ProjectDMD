@@ -56,6 +56,32 @@ protected:
 
 
 ////////////////////////////////////////////////////////////////////////////////
+// MODE: PanelTest
+
+/* Simple clock mode... Not fully fleshed out yet. */
+class MPanelTest : public PanelMode
+{
+public:
+	MPanelTest							();
+	virtual ~MPanelTest					();
+
+protected:
+	virtual void internalUpdate			();
+
+private:
+	const int							UPDATES_PER_COLOR = 60;
+	int									_updateCount;
+	rgb_matrix::Color					_currentColor;
+	rgb_matrix::Color					_red;
+	rgb_matrix::Color					_green;
+	rgb_matrix::Color					_blue;
+	SFill*								_fillSource;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////////////////////////
 // MODE: Clock
 
 /* Simple clock mode... Not fully fleshed out yet. */
@@ -75,4 +101,6 @@ public:
 protected:
     virtual void internalUpdate();
 };
+
+////////////////////////////////////////////////////////////////////////////////
 

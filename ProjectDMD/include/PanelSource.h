@@ -53,6 +53,26 @@ public:
 
 
 ////////////////////////////////////////////////////////////////////////////////
+// SOURCE: Generic Sources
+
+/* Evaluates the integrity of each LED's RGB components on the panel. */
+class SFill : public PanelSource
+{
+public:
+	SFill							(rgb_matrix::Color color, float opacity = 1.0f);
+	~SFill							();
+	void Update						();
+	void SetColor					(rgb_matrix::Color color, float opacity = 1.0f);
+
+private:
+	rgb_matrix::Color*				_color;
+	unsigned char					_opacity;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////////////////////////
 // SOURCE: Time
 
 /* a simple clock source used to display the current time. */

@@ -146,14 +146,14 @@ void Render::Text(
                             // don't do unecessary opacity computations
                             if (opacity == 1.0f)
                             {
-                                setPixel(
+								SetPixel(
                                     std::get<0>(currentRenderOrigin) + col,
                                     std::get<1>(currentRenderOrigin) + row,
                                     colorPalette.GetColor((*characterRaster)[col][row]));
                             }
                             else
                             {
-                                setPixel(
+								SetPixel(
                                     std::get<0>(currentRenderOrigin) + col,
                                     std::get<1>(currentRenderOrigin) + row,
                                     colorPalette.GetColor((*characterRaster)[col][row]),
@@ -226,13 +226,13 @@ void Render::Notification(
             // don't do unecessary opacity computations
             if (opacity == 1.0f)
             {
-                if (drawBoarder) { setPixel(x, y, colorPalette.GetColor(15)); }
-                else { setPixel(x, y, colorPalette.GetColor(0)); }
+                if (drawBoarder) { SetPixel(x, y, colorPalette.GetColor(15)); }
+                else { SetPixel(x, y, colorPalette.GetColor(0)); }
             }
             else
             {
-                if (drawBoarder) { setPixel(x, y, colorPalette.GetColor(15)); }
-                else { setPixel(x, y, colorPalette.GetColor(0)); }
+                if (drawBoarder) { SetPixel(x, y, colorPalette.GetColor(15)); }
+                else { SetPixel(x, y, colorPalette.GetColor(0)); }
             }
         }
     }
@@ -241,7 +241,7 @@ void Render::Notification(
     Text(text, font, origin, color, opacity, justification, horizontalSpacing);
 }
 
-void Render::setPixel(
+void Render::SetPixel(
     int                             xPos,
     int                             yPos,
     const rgb_matrix::Color*        color
@@ -252,7 +252,7 @@ void Render::setPixel(
     _currentFrame[xPos][yPos]->b = color->b;
 }
 
-void Render::setPixel(
+void Render::SetPixel(
     int                             xPos,
     int                             yPos,
     const rgb_matrix::Color*        color,
