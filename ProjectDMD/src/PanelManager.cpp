@@ -31,11 +31,16 @@ int PanelManager::Run(int argc, char* argv[])
     initializeSystems(argc, argv);
     initializeModes();
 
+	rgb_matrix::Color* color = new rgb_matrix::Color(255, 0, 0);
+
     // panel refresh loop
     while (!interrupt_received)
     {
         // clear current frame and canvas
         Render::Clear();
+
+
+		Render::SetPixel(0, 0, color);
 
         // refresh the current mode (renders to current frame)
         _panelModes[_currentMode]->Update();

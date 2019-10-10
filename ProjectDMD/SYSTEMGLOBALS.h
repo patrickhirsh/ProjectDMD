@@ -9,7 +9,7 @@
 /* Panel Properties*/
 #define PANEL_WIDTH 64
 #define PANEL_HEIGHT 32
-#define PANEL_COUNT_X 2
+#define PANEL_COUNT_X 1
 #define PANEL_COUNT_Y 1
 
 /* number of horizontal pixels to skip (leave "blank") when rendering 
