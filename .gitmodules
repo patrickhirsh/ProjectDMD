@@ -1,0 +1,4 @@
+
+[submodule "ProjectDMD/lib/rpi-rgb-led-matrix"]
+	path = ProjectDMD/lib/rpi-rgb-led-matrix
+	url = https://github.com/hzeller/rpi-rgb-led-matrix
