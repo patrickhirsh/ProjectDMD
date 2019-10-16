@@ -6,7 +6,6 @@
 CXXFLAGS = -Wall -O3 -g
 
 # Project Files
-HDR = $(wildcard include/*.h) SYSTEMGLOBALS.h
 SRC_BASE = $(wildcard src/*.cpp)
 SRC_RESOURCE = $(wildcard src/resource/*.cpp)
 SRC_SOURCES = $(wildcard src/source/*.cpp)
@@ -14,9 +13,14 @@ SRC_UTILITY = $(wildcard src/utility/*.cpp)
 SRC_OBJECT = $(wildcard src/object/*.cpp)
 SRC_RENDER = $(wildcard src/render/*.cpp)
 SRC_MODE = $(wildcard src/mode/*.cpp)
+HDR = $(wildcard include/*.h) SYSTEMGLOBALS.h
 SRC = $(SRC_BASE) $(SRC_SOURCES) $(SRC_UTILITY) $(SRC_RESOURCE) $(SRC_OBJECT) $(SRC_RENDER) $(SRC_MODE)
 TMP := $(subst src/,obj/,$(SRC))
 OBJ := $(subst .cpp,.o,$(TMP))
+
+# Directory Management
+MD = mkdir -p
+CD = cd
 
 # LIB FILES
 RGB_LIB_DISTRIBUTION=lib/rpi-rgb-led-matrix
@@ -31,11 +35,20 @@ LDFLAGS+=-L$(RGB_LIBDIR) -l$(RGB_LIBRARY_NAME) -lrt -lm -lpthread
 # TARGETS
 ######################################################################
 
-ProjectDMD: clean $(OBJ) $(HDR) $(RGB_LIBRARY)
+ProjectDMD: init clean $(OBJ) $(HDR) $(RGB_LIBRARY)
 	$(CXX) $(CXXFLAGS) $(OBJ) -o ProjectDMD $(LDFLAGS)
 
 $(RGB_LIBRARY):
 	$(MAKE) -C $(RGB_LIBDIR)
+
+init:
+	${MD} obj
+	${MD} obj/resource
+	${MD} obj/source
+	${MD} obj/utility
+	${MD} obj/object
+	${MD} obj/render
+	${MD} obj/mode
 
 clean:
 	rm -f $(OBJ) ProjectDMD
@@ -56,4 +69,4 @@ obj/%.o: src/%.cpp
 
 
 ######################################################################
-.PHONY: clean, run, run-debug
+.PHONY: init, clean, run, run-debug
