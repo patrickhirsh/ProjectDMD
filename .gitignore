@@ -1,2 +1,3 @@
 .vscode
 ProjectDMD/.vs/*
+*.o
