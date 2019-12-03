@@ -31,21 +31,13 @@ int PanelManager::Run(int argc, char* argv[])
     initializeSystems(argc, argv);
     initializeModes();
 
-	rgb_matrix::Color* color = new rgb_matrix::Color(255, 0, 0);
-
     // panel refresh loop
     while (!interrupt_received)
     {
-        // clear current frame and canvas
-        Render::Clear();
-
-
-		Render::SetPixel(0, 0, color);
-
         // refresh the current mode (renders to current frame)
         _panelModes[_currentMode]->Update();
 
-        // draw current frame to the panel
+        // swap current frame on VSync
         Render::FinalizeFrame();
 
         /* limit actual content refresh to a fixed framerate to prevent unecessary 
@@ -72,7 +64,7 @@ void PanelManager::initializeSystems(int argc, char *argv[])
 void PanelManager::initializeModes()
 {
     _panelModes.empty();
-	_currentMode = Mode::PanelTest;
+	_currentMode = Mode::BasicClock;
 
 	/* Panel Test */
 	_panelModes[Mode::PanelTest] = new MPanelTest();

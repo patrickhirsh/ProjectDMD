@@ -48,7 +48,7 @@ DMDColorPalette::DMDColorPalette(rgb_matrix::Color color)
     }
 }
 
-/* Creates a color palette (star intensity values in the form of rgb_matrix colors)
+/* Creates a color palette (store intensity values in the form of rgb_matrix colors)
 for use when rendering for improved performance. Do this once for any mono-color render,
 then call GetColor() to get any color in the palette without the computational overhead
 of per-pixel transcoding. */

@@ -54,10 +54,10 @@ clean:
 	rm -f $(OBJ) ProjectDMD
 
 run:
-	sudo ./ProjectDMD --led-rows=32 --led-cols=64 --led-chain=1 --led-gpio-mapping=regular
+	sudo ./ProjectDMD --led-slowdown-gpio=3
 
 run-debug:
-	sudo ./ProjectDMD --led-show-refresh --led-rows=32 --led-cols=64 --led-chain=4 --led-parallel=2 --led-gpio-mapping=regular --led-slowdown-gpio=1
+	sudo ./ProjectDMD --led-show-refresh --led-slowdown-gpio=3
 
 
 ######################################################################

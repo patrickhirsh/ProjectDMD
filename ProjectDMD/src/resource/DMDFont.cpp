@@ -22,7 +22,7 @@ DMDF::DMDF(std::string file)
     std::ifstream source;
     source.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     try { source.open(file.c_str()); }
-    catch (std::ifstream::failure e) { ErrorHandler::Log("DMDF", 
+    catch (std::system_error& e) { ErrorHandler::Log("DMDF",
         "Error opening " + file + " : " + std::strerror(errno), ErrorNum::ERROR_RESOURCE_NOT_FOUND); }
 
     if (!source.is_open()) { this->_loaded = false; }

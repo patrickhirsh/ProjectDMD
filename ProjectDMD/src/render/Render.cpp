@@ -6,7 +6,9 @@
 
 /* Statics */
 float Render::_globalBrightness = 1.0f;
-Canvas* Render::_canvas;
+GPIO* Render::_gpio;
+RGBMatrix* Render::_matrix;
+FrameCanvas* Render::_buffer;
 rgb_matrix::Color* Render::_currentFrame[PANEL_WIDTH*PANEL_COUNT_X][PANEL_HEIGHT*PANEL_COUNT_Y];
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -15,37 +17,48 @@ rgb_matrix::Color* Render::_currentFrame[PANEL_WIDTH*PANEL_COUNT_X][PANEL_HEIGHT
 void Render::Initialize(int argc, char* argv[])
 {
     // define matrix options
-    RGBMatrix::Options defaults;
-    defaults.hardware_mapping = "adafruit-hat";
-    defaults.rows = PANEL_HEIGHT;
-    defaults.cols = PANEL_WIDTH;
-    defaults.chain_length = PANEL_COUNT_X;
-    defaults.show_refresh_rate = false;
+    RGBMatrix::Options options;
+    options.hardware_mapping = HARDWARE_MAPPING;
+    options.rows = PANEL_HEIGHT;
+    options.cols = PANEL_WIDTH;
+    options.chain_length = PANEL_COUNT_X;
+	options.parallel = PANEL_COUNT_Y;
 
-    // create the canvas
-    _canvas = rgb_matrix::CreateMatrixFromFlags(&argc, &argv, &defaults);
-    if (_canvas == NULL) { ErrorHandler::Log("Render", 
-        "Couldn't create canvas (are runtime arguments valid?)", ErrorNum::FATAL_INVALID_CANVAS); }
+    // init GPIO settings
+    _gpio = new GPIO();
+    _gpio->Init(GPIO_SLOWDOWN);
+
+    // create the matrix
+    _matrix = new rgb_matrix::RGBMatrix(_gpio, options);
+    if (_matrix == NULL) { ErrorHandler::Log("Render", 
+        "Couldn't create matrix instance (are matrix options valid?)", ErrorNum::FATAL_INVALID_MATRIX); }
+
+    // create the buffer
+    _buffer = _matrix->CreateFrameCanvas();
 
     // create the current frame
-    for (int y = 0; y < _canvas->height(); y++)
-        for (int x = 0; x < _canvas->width(); x++)
+    for (int y = 0; y < _matrix->height(); y++)
+        for (int x = 0; x < _matrix->width(); x++)
             _currentFrame[x][y] = new rgb_matrix::Color(0, 0, 0);
 }
 
 void Render::FinalizeFrame()
 {
-    if (_canvas == NULL) { ErrorHandler::Log("Render", "Canvas is null!", ErrorNum::FATAL_INVALID_CANVAS); }
-    for (int y = 0; y < _canvas->height(); y++)
+    if (_matrix == NULL) { ErrorHandler::Log("Render", "Matrix is null!", ErrorNum::FATAL_INVALID_MATRIX); }
+    for (int y = 0; y < _matrix->height(); y++)
     {
-        for (int x = 0; x < _canvas->width(); x++)
+        for (int x = 0; x < _matrix->width(); x++)
         {
-            _canvas->SetPixel(x, y,
-                (int)(_currentFrame[x][y]->r * _globalBrightness),
-                (int)(_currentFrame[x][y]->g * _globalBrightness),
-                (int)(_currentFrame[x][y]->b * _globalBrightness));
+			_buffer->SetPixel(
+				FLIP_HORIZONTAL ? (_matrix->width() - 1) - x : x,
+				FLIP_VERTICAL ? (_matrix->height() - 1) - y : y,
+				(int)(_currentFrame[x][y]->r * _globalBrightness),
+				(int)(_currentFrame[x][y]->g * _globalBrightness),
+				(int)(_currentFrame[x][y]->b * _globalBrightness));
         }
     }
+    _buffer = _matrix->SwapOnVSync(_buffer);
+    Render::Clear();
 }
 
 float Render::GetGlobalBrightness()
@@ -77,23 +90,23 @@ void Render::SetGlobalBrightness(float brightness)
 
 int Render::GetDisplayWidth()
 {
-    if (_canvas == NULL) { ErrorHandler::Log("Render", "Canvas is null!", ErrorNum::FATAL_INVALID_CANVAS); return -1; }
-    else { return (_canvas->width()); }
+    if (_matrix == NULL) { ErrorHandler::Log("Render", "Matrix is null!", ErrorNum::FATAL_INVALID_MATRIX); return -1; }
+    else { return (_matrix->width()); }
 }
 
 int Render::GetDisplayHeight()
 {
-    if (_canvas == NULL) { ErrorHandler::Log("Render", "Canvas is null!", ErrorNum::FATAL_INVALID_CANVAS); return -1; }
-    else { return (_canvas->height()); }
+    if (_matrix == NULL) { ErrorHandler::Log("Render", "Matrix is null!", ErrorNum::FATAL_INVALID_MATRIX); return -1; }
+    else { return (_matrix->height()); }
 }
 
 void Render::Clear()
 {
-    if (_canvas == NULL) { ErrorHandler::Log("Render", "Canvas is null!", ErrorNum::FATAL_INVALID_CANVAS); }
-    _canvas->Clear();
-    for (int y = 0; y < _canvas->height(); y++)
+    if (_buffer == NULL) { ErrorHandler::Log("Render", "Buffer is null!", ErrorNum::FATAL_INVALID_BUFFER); }
+    _buffer->Clear();
+    for (int y = 0; y < _matrix->height(); y++)
     {
-        for (int x = 0; x < _canvas->width(); x++)
+        for (int x = 0; x < _matrix->width(); x++)
         {
             _currentFrame[x][y]->r = 0;
             _currentFrame[x][y]->g = 0;
@@ -103,16 +116,16 @@ void Render::Clear()
 }
 
 void Render::Text(
-    std::string													        text,
-    const DMDF*																			  font,
-    std::tuple<int, int>				        origin,
-    const rgb_matrix::Color*							 color,
+    std::string						text,
+    const DMDF*						font,
+    std::tuple<int, int>			origin,
+    const rgb_matrix::Color*		color,
     float                           opacity,
-    TextJustification							        justification,
-    int																					        horizontalSpacing
+    TextJustification				justification,
+    int								horizontalSpacing
 )
 {
-    if (_canvas == NULL) { ErrorHandler::Log("Render", "Canvas is null!", ErrorNum::FATAL_INVALID_CANVAS); }
+    if (_matrix == NULL) { ErrorHandler::Log("Render", "Matrix is null!", ErrorNum::FATAL_INVALID_MATRIX); return; }
     if (opacity > 1.0f) { opacity = 1.0f; }
     if (opacity <= 0.0f) { return; }
     
@@ -200,7 +213,7 @@ void Render::Notification(
     int                             outlineSpacing
 )
 {
-    if (_canvas == NULL) { ErrorHandler::Log("Render", "Canvas is null!", ErrorNum::FATAL_INVALID_CANVAS); }
+    if (_matrix == NULL) { ErrorHandler::Log("Render", "Matrix is null!", ErrorNum::FATAL_INVALID_MATRIX); return; }
     if (opacity > 1.0f) { opacity = 1.0f; }
     if (opacity <= 0.0f) { return; }
 
@@ -266,11 +279,11 @@ void Render::SetPixel(
 }
 
 std::tuple<int, int> Render::getOriginAfterJustification(
-    std::string													        text,
-    const DMDF*																			  font,
-    std::tuple<int, int>				        origin,
-    int																					        horizontalSpacing,
-    TextJustification							        justification
+    std::string						text,
+    const DMDF*						font,
+    std::tuple<int, int>			origin,
+    int								horizontalSpacing,
+    TextJustification				justification
 )
 {
     switch (justification)
@@ -293,9 +306,9 @@ std::tuple<int, int> Render::getOriginAfterJustification(
 }
 
 int Render::getTextWidth(
-    std::string													        text,
-    const DMDF*																			  font,
-    int																					        horizontalSpacing
+    std::string						text,
+    const DMDF*						font,
+    int								horizontalSpacing
 )
 {
     int totalWidth = 0;

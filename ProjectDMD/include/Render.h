@@ -101,7 +101,9 @@ public:
 		float                           opacity);
 
 private:
-    static Canvas*						_canvas;
+    static GPIO*                        _gpio;
+    static RGBMatrix*					_matrix;
+    static FrameCanvas*                 _buffer;
     static float                        _globalBrightness;
 
     /* all render calls per-frame mutate this canvas prior to drawing to the panel */
