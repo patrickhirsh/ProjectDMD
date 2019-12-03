@@ -21,6 +21,7 @@
 #include <locale>
 #include <list>
 #include <map>
+#include <sstream>
 #include <vector>
 
 // Local
@@ -32,7 +33,6 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 // PanelSource
-
 
 class PanelSource
 {
@@ -55,18 +55,48 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 // SOURCE: Generic Sources
 
-/* Evaluates the integrity of each LED's RGB components on the panel. */
 class SFill : public PanelSource
 {
 public:
-	SFill							(rgb_matrix::Color color, float opacity = 1.0f);
-	~SFill							();
-	void Update						();
-	void SetColor					(rgb_matrix::Color color, float opacity = 1.0f);
+	SFill							    (rgb_matrix::Color color, float opacity = 1.0f);
+	~SFill							    ();
+	void Update						    ();
+	void SetColor					    (rgb_matrix::Color color, float opacity = 1.0f);
 
 private:
-	rgb_matrix::Color*				_color;
-	unsigned char					_opacity;
+	rgb_matrix::Color*				    _color;
+	float       					    _opacity;
+};
+
+class SText : public PanelSource
+{
+public:
+    SText(
+        std::string                     text,
+        std::tuple<int, int>            origin,
+        const DMDF*                     font = ResourceManager::GetSystemFont(),
+        Render::TextJustification       justification = Render::TextJustification::Center,
+        const rgb_matrix::Color*        color = ResourceManager::GetSystemColorPalette()->GetColor(15),
+        float                           opacity = 1.0f,
+        int                             horizontalTextSpacing = 0,
+        int                             verticalTextSpacing = 2,
+        bool                            wrap = true);
+
+    ~SText                              ();
+    void Update                         ();
+    void SetColor                       (const rgb_matrix::Color* color, float opacity = 1.0f);
+    void SetOrigin                      (std::tuple<int, int> origin) { _origin = origin; }
+
+private:
+    std::string                         _text;
+    std::tuple<int, int>                _origin;
+    const DMDF*                         _font;
+    Render::TextJustification           _justification;
+    const rgb_matrix::Color*		    _color;
+	float       					    _opacity;
+    int                                 _horizontalTextSpacing;
+    int                                 _verticalTextSpacing;
+    bool                                _wrap;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

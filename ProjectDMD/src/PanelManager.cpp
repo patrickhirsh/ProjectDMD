@@ -39,14 +39,6 @@ int PanelManager::Run(int argc, char* argv[])
 
         // swap current frame on VSync
         Render::FinalizeFrame();
-
-        /* limit actual content refresh to a fixed framerate to prevent unecessary 
-        memory churning. The panel still scans at a much higher frequency, but constantly
-        ticking this update loop is avoided to keep panel scan rate optimal. See
-        REFRESH_DELAY_MS in SYSTEMGLOBALS for more info. */
-#if __linux__
-        usleep(REFRESH_DELAY_MS);
-#endif 
     }
 
     // shutdown
@@ -64,7 +56,10 @@ void PanelManager::initializeSystems(int argc, char *argv[])
 void PanelManager::initializeModes()
 {
     _panelModes.empty();
-	_currentMode = Mode::BasicClock;
+	_currentMode = Mode::BootSequence; 
+
+    /* Boot Sequence */
+    _panelModes[Mode::BootSequence] = new MBootSequence();
 
 	/* Panel Test */
 	_panelModes[Mode::PanelTest] = new MPanelTest();

@@ -17,7 +17,14 @@ MClock::MClock(
     const DMDF*                     timeFont
 )
 {
-    STime* Clock = new STime(origin, timeFormat, justification, horizontalTextSpacing, timeColor, timeFont);
+    STime* Clock = new STime(
+        origin, 
+        timeFormat, 
+        justification, 
+        horizontalTextSpacing, 
+        timeColor, 
+        timeFont);
+        
     _sources.push_back(Clock);
 }
 

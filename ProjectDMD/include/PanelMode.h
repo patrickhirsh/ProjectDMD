@@ -56,6 +56,23 @@ protected:
 
 
 ////////////////////////////////////////////////////////////////////////////////
+// MODE: Boot Sequence
+
+/* System Boot */
+class MBootSequence : public PanelMode
+{
+public:
+	MBootSequence						(const rgb_matrix::Color* color = ResourceManager::GetSystemColorPalette()->GetColor(15));
+	virtual ~MBootSequence				();
+
+protected:
+	virtual void internalUpdate			();
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////////////////////////
 // MODE: PanelTest
 
 /* Simple clock mode... Not fully fleshed out yet. */
