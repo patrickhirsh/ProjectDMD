@@ -65,9 +65,9 @@ public:
     static const DMDF* GetSystemFont();                             // get the system font
 
 private:
-    static DMDColorPalette*																									_systemColorPalette;
-    static DMDF*																																				_systemFont;
-    static std::map<std::string, DMDF*>*												_fonts;
+    static DMDColorPalette*									_systemColorPalette;
+    static DMDF*											_systemFont;
+    static std::map<std::string, DMDF*>*					_fonts;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -104,9 +104,9 @@ public:
 
 private:
     bool _loaded;
-    std::map<char, DMDFC*>*					_characters;
-    int																									_fontHeight;
-    std::string																	_fontName;
+    std::map<char, DMDFC*>*					                _characters;
+    int														_fontHeight;
+    std::string												_fontName;
 };
 
 class DMDFC
@@ -114,9 +114,9 @@ class DMDFC
 public:
     DMDFC(char character, std::tuple<int, int> dimmensions, std::vector<std::vector<unsigned char>>* raster);
 
-    char																																								Character;														// Character that this DMDFC represents
-    std::tuple<int, int>																								CharacterDimensions;				// (width, height)
-    std::vector<std::vector<unsigned char>>*				CharacterRaster;								// (right to left, top to bottom)
+    char													Character;							// Character that this DMDFC represents
+    std::tuple<int, int>									CharacterDimensions;				// (width, height)
+    std::vector<std::vector<unsigned char>>*				CharacterRaster;					// (right to left, top to bottom)
 };
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -75,6 +75,15 @@ public:
         TextJustification				justification = TextJustification::Left,    // render text leftward/rightward/outward from the origin
         int								horizontalSpacing = 0);                     // number of pixels to skip between characters
 
+    /* renders a rectangle between origin1 and origin 2 */
+    static void Rectangle(
+        std::tuple<int, int>			origin1,
+        std::tuple<int, int>			origin2,                                   
+        const rgb_matrix::Color*        color,                                      // rectangle color
+        float                           opactiy,                                    // rectangle opacity
+        bool                            fill = true,                                // if false, will only draw border
+        int                             borderWidth = 1);
+
     /* renders a notification in a notification box. */
     static void Notification(
         std::string                     text,                                       // the text to render (leading whitespace ignored)

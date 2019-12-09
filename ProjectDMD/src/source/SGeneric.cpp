@@ -41,6 +41,50 @@ void SFill::SetColor(rgb_matrix::Color color, float opacity)
 
 
 ////////////////////////////////////////////////////////////////////////////////
+// SOURCE: Rectangle
+
+SRectangle::SRectangle(
+	std::tuple<int, int>			origin1,
+    std::tuple<int, int>			origin2,                                   
+    const rgb_matrix::Color*        color,
+    float                           opacity,
+	bool							fill,
+	int								borderWidth
+)
+{
+	_origin1 = origin1;
+	_origin2 = origin2;
+	_color = color;
+	_opacity = opacity;
+	_fill = fill;
+	_borderWidth = borderWidth;
+}
+
+void SRectangle::Update()
+{
+	Render::Rectangle(_origin1, _origin2, _color, _opacity, _fill, _borderWidth);
+}
+
+void SRectangle::Translate(std::tuple<int, int> offset)
+{
+	_origin1 = std::tuple<int, int>(
+		std::get<0>(_origin1) + std::get<0>(offset), 
+		std::get<1>(_origin1) + std::get<1>(offset));
+	_origin2 = std::tuple<int, int>(
+		std::get<0>(_origin2) + std::get<0>(offset), 
+		std::get<1>(_origin2) + std::get<1>(offset));
+}
+
+void SRectangle::SetColor(const rgb_matrix::Color* color, float opacity)
+{
+	_color = color;
+	_opacity = opacity;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////////////////////////
 // SOURCE: Text
 
 SText::SText(
@@ -52,7 +96,7 @@ SText::SText(
 	float                           opacity,
 	int                             horizontalTextSpacing,
 	int                             verticalTextSpacing,
-	bool                            wrap
+	bool                            wrapOnNewline
 )
 {
 	_text = text;
@@ -63,17 +107,12 @@ SText::SText(
 	_opacity = opacity;
 	_horizontalTextSpacing = horizontalTextSpacing;
 	_verticalTextSpacing = verticalTextSpacing;
-	_wrap = wrap;
-}
-
-SText::~SText()
-{
-
+	_wrapOnNewline = wrapOnNewline;
 }
 
 void SText::Update()
 {
-	if (_wrap)
+	if (_wrapOnNewline)
 	{
 		std::stringstream stream(_text);
 		std::string token;

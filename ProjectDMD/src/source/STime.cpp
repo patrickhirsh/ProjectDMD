@@ -17,43 +17,43 @@ STime::STime(
     const DMDF*                     timeFont
 )
 {
-    this->Origin = origin;
-    this->_format = timeFormat;
-    this->_justification = justification;
-    this->_horizontalTextSpacing = horizontalTextSpacing;
-    this->_color = timeColor;
-    this->_font = timeFont;
-    this->_t = (time_t*)malloc(sizeof(time_t));
-    this->_renderPeriodDot = false;
+    _origin = origin;
+    _format = timeFormat;
+    _justification = justification;
+    _horizontalTextSpacing = horizontalTextSpacing;
+    _color = timeColor;
+    _font = timeFont;
+    _t = (time_t*)malloc(sizeof(time_t));
+    _renderPeriodDot = false;
 
     switch (timeFormat)
     {
     case TimeFormat::HH_MM_12_PERIOD_DOT:
-        this->_renderPeriodDot = true;
+        _renderPeriodDot = true;
         // intentional fall through
     case TimeFormat::HH_MM_12:
-        this->_formatInternal = "%l:%M";
+        _formatInternal = "%l:%M";
         break;
     case TimeFormat::HH_MM_SS_12_PERIOD_DOT:
-        this->_renderPeriodDot = true;
+        _renderPeriodDot = true;
         // intentional fall through
     case TimeFormat::HH_MM_SS_12:
-        this->_formatInternal = "%l:%M:%S";
+        _formatInternal = "%l:%M:%S";
         break;
     case TimeFormat::HH_MM_12_PERIOD:
-        this->_formatInternal = "%l:%M %P";
+        _formatInternal = "%l:%M %P";
         break;
     case TimeFormat::HH_MM_SS_12_PERIOD:
-        this->_formatInternal = "%l:%M:%S %P";
+        _formatInternal = "%l:%M:%S %P";
         break;
     case TimeFormat::HH_MM_24:
-        this->_formatInternal = "%k:%M";
+        _formatInternal = "%k:%M";
         break;
     case TimeFormat::HH_MM_SS_24:
-        this->_formatInternal = "%k:%M:%S";
+        _formatInternal = "%k:%M:%S";
         break;
     default:
-        this->_formatInternal = "%l:%M";
+        _formatInternal = "%l:%M";
         break;
     }
 }
@@ -66,7 +66,7 @@ STime::~STime()
 void STime::Update()
 {
     updateCurrentTime();
-    Render::Text(_currentTime, _font, Origin, _color, 1.0f, _justification, _horizontalTextSpacing);
+    Render::Text(_currentTime, _font, _origin, _color, 1.0f, _justification, _horizontalTextSpacing);
 }
 
 void STime::updateCurrentTime()

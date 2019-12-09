@@ -202,6 +202,100 @@ void Render::Text(
     }
 }
 
+void Render::Rectangle(
+    std::tuple<int, int>			origin1,
+    std::tuple<int, int>			origin2,                                   
+    const rgb_matrix::Color*        color,                              
+    float                           opacity,
+    bool                            fill,
+    int                             borderWidth                          
+)
+{
+    int xLo;
+    int yLo;
+    int xHi;
+    int yHi;
+    int x;
+    int y;
+
+    // ensure we always draw top-left to bottom-right
+    if (std::get<0>(origin1) < std::get<0>(origin2))
+    {
+        xLo = std::get<0>(origin1);
+        xHi = std::get<0>(origin2);
+    }
+    else
+    {
+        xLo = std::get<0>(origin2);
+        xHi = std::get<0>(origin1);
+    }
+    if (std::get<1>(origin1) < std::get<1>(origin2))
+    {
+        yLo = std::get<1>(origin1);
+        yHi = std::get<1>(origin2);
+    }
+    else
+    {
+        yLo = std::get<1>(origin2);
+        yHi = std::get<1>(origin1);
+    }
+    
+    // fill mode
+    if (fill)
+    {
+        for (y = yLo; y <= yLo + yHi; y++)
+            if (y < GetDisplayHeight() && y >= 0)
+                for (x = xLo; x <= xLo + xHi; x++)
+                    if (x < GetDisplayWidth() && x >= 0)
+                        SetPixel(x, y, color, opacity);
+    }
+
+    // border mode 
+    else        
+    {
+        // top
+        y = yLo;
+        while (y < yLo + borderWidth && y <= yHi)
+        {
+            if (y < GetDisplayHeight() && y >= 0)
+                for (x = xLo; x <= xLo + xHi; x++)
+                    if (x < GetDisplayWidth() && x >= 0)
+                        SetPixel(x, y, color, opacity);
+            y++;
+        }
+        // bottom
+        y = yHi;
+        while (y > yHi - borderWidth && y >= yLo)
+        {
+            if (y < GetDisplayHeight() && y >= 0)
+                for (x = xLo; x <= xLo + xHi; x++)
+                    if (x < GetDisplayWidth() && x >= 0)
+                        SetPixel(x, y, color, opacity);
+            y--;
+        }
+        // left
+        x = xLo;
+        while (x < xLo + borderWidth && x <= xHi)
+        {
+            if (x < GetDisplayWidth() && x >= 0)
+                for (y = yLo; y <= yLo + yHi; y++)
+                    if (y < GetDisplayHeight() && y >= 0)
+                        SetPixel(x, y, color, opacity);
+            x++;
+        }
+        // right
+        x = xHi;
+        while (x > xHi - borderWidth && x >= xLo)
+        {
+            if (x < GetDisplayWidth() && x >= 0)
+                for (y = yLo; y <= yLo + yHi; y++)
+                    if (y < GetDisplayHeight() && y >= 0)
+                        SetPixel(x, y, color, opacity);
+            x--;
+        }
+    }    
+}
+
 void Render::Notification(
     std::string                     text,
     const DMDF*                     font,

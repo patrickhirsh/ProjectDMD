@@ -16,7 +16,8 @@ void PanelMode::Update()
     // update all sources pertaining to this mode
     for (PanelSource* source : _sources)
     {
-        source->Update();
+        if (source->IsActive)
+            source->Update();
     }
 }
 

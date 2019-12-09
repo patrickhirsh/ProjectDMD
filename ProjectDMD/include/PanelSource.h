@@ -40,8 +40,6 @@ public:
     /* Should this source be rendered? */
     bool IsActive = true;
 
-    std::tuple<int, int> Origin;
-
     /* called once per frame. */
     virtual void Update() = 0;
     
@@ -68,6 +66,33 @@ private:
 	float       					    _opacity;
 };
 
+class SRectangle : public PanelSource
+{
+public:
+    SRectangle(
+        std::tuple<int, int>			origin1,
+        std::tuple<int, int>			origin2,                                   
+        const rgb_matrix::Color*        color,
+        float                           opactiy = 1.0f,
+        bool                            fill = true,
+        int                             borderWidth = 1);
+    
+    ~SRectangle                         () { return; }
+    void Update                         ();
+    void Translate                      (std::tuple<int, int> offset);
+    void SetColor                       (const rgb_matrix::Color* color, float opacity = 1.0f);
+    void SetOrigin1                     (std::tuple<int, int> origin1) { _origin1 = origin1; }
+    void SetOrigin2                     (std::tuple<int, int> origin2) { _origin2 = origin2; }
+
+private:
+    std::tuple<int, int>                _origin1;
+    std::tuple<int, int>                _origin2;
+    const rgb_matrix::Color*            _color;
+    float                               _opacity;
+    bool                                _fill;
+    int                                 _borderWidth;
+};
+
 class SText : public PanelSource
 {
 public:
@@ -80,10 +105,11 @@ public:
         float                           opacity = 1.0f,
         int                             horizontalTextSpacing = 0,
         int                             verticalTextSpacing = 2,
-        bool                            wrap = true);
+        bool                            wrapOnNewline = true);
 
-    ~SText                              ();
+    ~SText                              () { return; }
     void Update                         ();
+    void SetText                        (std::string text) { _text = text;}
     void SetColor                       (const rgb_matrix::Color* color, float opacity = 1.0f);
     void SetOrigin                      (std::tuple<int, int> origin) { _origin = origin; }
 
@@ -96,7 +122,7 @@ private:
 	float       					    _opacity;
     int                                 _horizontalTextSpacing;
     int                                 _verticalTextSpacing;
-    bool                                _wrap;
+    bool                                _wrapOnNewline;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -147,6 +173,7 @@ private:
     char                                _timeBuffer[256];
     char                                _currentTime[256];
     TimeFormat                          _format;
+    std::tuple<int, int>                _origin;
     Render::TextJustification           _justification;
     int                                 _horizontalTextSpacing;
     const rgb_matrix::Color*            _color;

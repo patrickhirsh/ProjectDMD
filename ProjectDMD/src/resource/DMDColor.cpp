@@ -13,25 +13,25 @@ These input DMDF values and their mappings come straight from the DMDF/DMDA Proj
 Resource Packager. 255 represents transparent (and maps to -1 in our system). */
 std::map<unsigned char, float>* DMDColorPalette::_sternPixelMap = new std::map<unsigned char, float>({
     { 255, -1.0f },
-    { 15, (float)(255 / 255) },
-    { 14, (float)(247 / 255) },
-    { 13, (float)(240 / 255) },
-    { 12, (float)(232 / 255) },
-    { 11, (float)(222 / 255) },
-    { 10, (float)(212 / 255) },
-    { 9, (float)(203 / 255) },
-    { 8, (float)(190 / 255) },
-    { 7, (float)(214 / 255) },
-    { 6, (float)(203 / 255) },
-    { 5, (float)(191 / 255) },
-    { 4, (float)(177 / 255) },
-    { 3, (float)(161 / 255) },
-    { 2, (float)(140 / 255) },
-    { 1, (float)(113 / 255) },
+    { 15, (255.0f / 255.0f) },
+    { 14, (247.0f / 255.0f) },
+    { 13, (240.0f / 255.0f) },
+    { 12, (232.0f / 255.0f) },
+    { 11, (222.0f / 255.0f) },
+    { 10, (212.0f / 255.0f) },
+    { 9, (203.0f / 255.0f) },
+    { 8, (190.0f / 255.0f) },
+    { 7, (214.0f / 255.0f) },
+    { 6, (203.0f / 255.0f) },
+    { 5, (191.0f / 255.0f) },
+    { 4, (177.0f / 255.0f) },
+    { 3, (161.0f / 255.0f) },
+    { 2, (140.0f / 255.0f) },
+    { 1, (113.0f / 255.0f) },
     { 0, 0.0f }
     });
 
-/* Creates a color palette (star intensity values in the form of rgb_matrix colors)
+/* Creates a color palette (store intensity values in the form of rgb_matrix colors)
 for use when rendering for improved performance. Do this once for any mono-color render,
 then call GetColor() to get any color in the palette without the computational overhead
 of per-pixel transcoding. */
@@ -41,9 +41,9 @@ DMDColorPalette::DMDColorPalette(rgb_matrix::Color color)
     for (unsigned char i = 0; i < 16; i++)
     {
         rgb_matrix::Color* newColor = new rgb_matrix::Color(
-            (uint8_t)(color.r * getBrightnessFromSternValue(i)),
-            (uint8_t)(color.g * getBrightnessFromSternValue(i)),
-            (uint8_t)(color.b * getBrightnessFromSternValue(i)));
+            (uint8_t)((float)color.r * getBrightnessFromSternValue(i)),
+            (uint8_t)((float)color.g * getBrightnessFromSternValue(i)),
+            (uint8_t)((float)color.b * getBrightnessFromSternValue(i)));
         _colorMapping[i] = newColor;
     }
 }
@@ -58,9 +58,9 @@ DMDColorPalette::DMDColorPalette(const rgb_matrix::Color* color)
     for (unsigned char i = 0; i < 16; i++)
     {
         rgb_matrix::Color* newColor = new rgb_matrix::Color(
-            (uint8_t)(color->r * getBrightnessFromSternValue(i)),
-            (uint8_t)(color->g * getBrightnessFromSternValue(i)),
-            (uint8_t)(color->b * getBrightnessFromSternValue(i)));
+            (uint8_t)((float)color->r * getBrightnessFromSternValue(i)),
+            (uint8_t)((float)color->g * getBrightnessFromSternValue(i)),
+            (uint8_t)((float)color->b * getBrightnessFromSternValue(i)));
         _colorMapping[i] = newColor;
     }
 }
