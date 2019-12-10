@@ -63,6 +63,12 @@ STime::~STime()
     delete _t;
 }
 
+void STime::SetColor(const rgb_matrix::Color* color, float opacity)
+{
+	_color = color;
+	_opacity = opacity;
+}
+
 void STime::Update()
 {
     updateCurrentTime();

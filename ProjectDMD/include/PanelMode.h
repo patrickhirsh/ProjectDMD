@@ -27,6 +27,7 @@
 #include "../SYSTEMGLOBALS.h"
 #include "Error.h"
 #include "PanelSource.h"
+#include "Modifier.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -62,11 +63,14 @@ protected:
 class MBootSequence : public PanelMode
 {
 public:
-	MBootSequence						(const rgb_matrix::Color* color = ResourceManager::GetSystemColorPalette()->GetColor(15));
+	MBootSequence						();
 	virtual ~MBootSequence				();
 
 protected:
-	virtual void internalUpdate			();
+	virtual void internalUpdate			();   
+    HueShiftModifier*                   _hueShiftModifier;
+    SText*                              _logo;
+    rgb_matrix::Color*                  _color;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -117,6 +121,10 @@ public:
 
 protected:
     virtual void internalUpdate();
+    HueShiftModifier*                   _hueShiftModifier;
+    STime*                              _time;
+    rgb_matrix::Color*                  _color;
+    
 };
 
 ////////////////////////////////////////////////////////////////////////////////

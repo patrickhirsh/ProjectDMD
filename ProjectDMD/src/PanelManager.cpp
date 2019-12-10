@@ -56,7 +56,7 @@ void PanelManager::initializeSystems(int argc, char *argv[])
 void PanelManager::initializeModes()
 {
     _panelModes.empty();
-	_currentMode = Mode::BootSequence; 
+	_currentMode = Mode::BasicClock; 
 
     /* Boot Sequence */
     _panelModes[Mode::BootSequence] = new MBootSequence();

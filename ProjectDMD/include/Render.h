@@ -118,7 +118,7 @@ private:
     /* all render calls per-frame mutate this canvas prior to drawing to the panel */
     static rgb_matrix::Color*           _currentFrame[PANEL_WIDTH*PANEL_COUNT_X][PANEL_HEIGHT*PANEL_COUNT_Y];
 
-    /* determines where to begin rendering based on selected Justification and text length */
+    /* determines where to begin rendering text based on selected Justification and text length */
     static std::tuple<int, int> getOriginAfterJustification(
         std::string						text,
         const DMDF*						font,

@@ -163,9 +163,10 @@ public:
         const rgb_matrix::Color*        timeColor = ResourceManager::GetSystemColorPalette()->GetColor(15),
         const DMDF*                     timeFont = ResourceManager::GetSystemFont());
 
-    ~STime();
-
-    void Update();
+    ~STime                              ();
+    void Update                         ();
+    void SetColor                       (const rgb_matrix::Color* color, float opacity = 1.0f);
+    void SetOrigin                      (std::tuple<int, int> origin) { _origin = origin; }
 
 private:
     time_t*                             _t;
@@ -177,6 +178,7 @@ private:
     Render::TextJustification           _justification;
     int                                 _horizontalTextSpacing;
     const rgb_matrix::Color*            _color;
+    float                               _opacity;
     const DMDF*                         _font;
     const char*                         _formatInternal;
     bool                                _renderPeriodDot;

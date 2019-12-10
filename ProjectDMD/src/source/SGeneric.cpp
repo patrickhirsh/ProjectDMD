@@ -135,8 +135,7 @@ void SText::Update()
 
 void SText::SetColor(const rgb_matrix::Color* color, float opacity)
 {
-	delete _color;
-	_color = new rgb_matrix::Color(color->r, color->g, color->b);
+	_color = color;
 	_opacity = opacity;
 }
 

@@ -17,15 +17,19 @@ MClock::MClock(
     const DMDF*                     timeFont
 )
 {
-    STime* Clock = new STime(
+    _hueShiftModifier = new HueShiftModifier(0.0, 360.0, 1.0, 1.0, 10.0, false);
+    rgb_matrix::Color color = _hueShiftModifier->GetColor();
+    _color = new rgb_matrix::Color(color);
+
+    _time = new STime(
         origin, 
         timeFormat, 
         justification, 
         horizontalTextSpacing, 
-        timeColor, 
+        _color, 
         timeFont);
         
-    _sources.push_back(Clock);
+    _sources.push_back(_time);
 }
 
 MClock::~MClock()
@@ -34,11 +38,16 @@ MClock::~MClock()
     {
         delete source;
     }
+    delete _hueShiftModifier;
+    delete _color;
 }
 
 void MClock::internalUpdate()
 {
-    return;
+    delete _color;
+    rgb_matrix::Color color = _hueShiftModifier->GetColor();
+    _color = new rgb_matrix::Color(color);
+    _time->SetColor(_color);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
