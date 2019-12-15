@@ -21,6 +21,7 @@
 #include <locale>
 #include <map>
 #include <vector>
+#include <chrono>
 
 // Linux Only
 #if __linux__
@@ -28,9 +29,6 @@
 #include <unistd.h>
 #include <dirent.h>
 #endif
-
-// All Platforms
-#include <signal.h>
 
 // Local
 #include "../SYSTEMGLOBALS.h"
@@ -60,13 +58,13 @@ public:
     };
 
     /* initialize all systems, run startup, and enter the main update loop. */
-    static int Run(int argc, char *argv[]);
+    static int Run  (int argc, char *argv[]);
 
 private:
-    static Mode _currentMode;
-    static std::map<Mode, PanelMode*> _panelModes;
-    static void initializeSystems(int argc, char *argv[]);
-    static void initializeModes();
+    static Mode                                                 _currentMode;
+    static std::map<Mode, PanelMode*>                           _panelModes;
+    static void initializeSystems                               (int argc, char *argv[]);
+    static void initializeModes                                 ();
 };
 
 ////////////////////////////////////////////////////////////////////////////////

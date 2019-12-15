@@ -53,3 +53,57 @@ rgb_matrix::Color HueShiftModifier::GetColor()
 
     return GraphicsUtility::HSV2RGB(hue);
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////////////////////////
+// LinearInterpolationModifier
+
+LinearInterpolationModifier::LinearInterpolationModifier()
+{
+    _isActive = false;
+}
+
+void LinearInterpolationModifier::Start(
+    std::tuple<int, int> origin,           
+    std::tuple<int, int> destination,
+    double duration
+)
+{
+    _isActive = true;
+    _origin = origin;
+    _destination = destination;
+    _duration = duration;
+    _startTime = std::chrono::high_resolution_clock::now();
+}
+
+bool LinearInterpolationModifier::IsActive()
+{
+    if (!_isActive) { return false; }
+    else
+    {
+        std::chrono::high_resolution_clock::time_point now = std::chrono::high_resolution_clock::now();
+        double elapsed = std::chrono::duration<double, std::milli>(now-_startTime).count();
+        if (elapsed < (_duration * 1000.0)) { return true; }
+        else 
+        { 
+            _isActive = false; 
+            return false; 
+        }
+    }
+}
+
+std::tuple<int, int> LinearInterpolationModifier::GetPoint()
+{
+    std::chrono::high_resolution_clock::time_point now = std::chrono::high_resolution_clock::now();
+    double elapsed = std::chrono::duration<double, std::milli>(now-_startTime).count();
+    if (elapsed >= (_duration * 1000.0)) { return _destination; }
+    else
+    {
+        double progress = elapsed / (_duration * 1000.0);
+        return std::tuple<int, int>(
+            (std::get<0>(_origin) + ((std::get<0>(_destination) - std::get<0>(_origin)) * progress)),
+            (std::get<1>(_origin) + ((std::get<1>(_destination) - std::get<1>(_origin)) * progress)));
+    }
+}

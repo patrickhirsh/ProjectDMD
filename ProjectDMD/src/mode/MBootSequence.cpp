@@ -19,15 +19,10 @@ MBootSequence::MBootSequence()
         std::tuple<int, int>(Render::GetDisplayWidth() / 2, ((Render::GetDisplayHeight() / 2) - (ResourceManager::GetFont("StarTrek_20.dmdf")->GetFontHeight() / 2))),
         ResourceManager::GetFont("StarTrek_20.dmdf"));
 
-    /*
-    SRectangle* rect = new SRectangle(
-        std::tuple<int, int>(0, 0),
-        std::tuple<int, int>(Render::GetDisplayWidth() - 1, Render::GetDisplayHeight() - 1),
-        ResourceManager::GetSystemColorPalette()->GetColor(1),
-        1.0f,
-        false,
-        2);
-    */
+    _linearInterpolationModifier = new LinearInterpolationModifier();
+    _point1 = std::tuple<int, int>(Render::GetDisplayWidth() / 2 - 50, ((20) - (ResourceManager::GetFont("StarTrek_20.dmdf")->GetFontHeight() / 2)));
+    _point2 = std::tuple<int, int>(Render::GetDisplayWidth() / 2 + 50, ((20) - (ResourceManager::GetFont("StarTrek_20.dmdf")->GetFontHeight() / 2)));
+    _direction = true;
 
     //_sources.push_back(rect);
     _sources.push_back(_logo);
@@ -49,6 +44,30 @@ void MBootSequence::internalUpdate()
     rgb_matrix::Color color = _hueShiftModifier->GetColor();
     _color = new rgb_matrix::Color(color);
     _logo->SetColor(_color);
+
+    if (_linearInterpolationModifier->IsActive())
+    {
+        _logo->SetOrigin(_linearInterpolationModifier->GetPoint());
+    }
+    else
+    {
+        if (_direction)
+        {
+            _linearInterpolationModifier->Start(
+                _point1,
+                _point2,
+                0.5);
+        }
+        else
+        {
+            _linearInterpolationModifier->Start(
+                _point2,
+                _point1,
+                0.5);
+        }
+        _logo->SetOrigin(_linearInterpolationModifier->GetPoint());
+        _direction = !_direction;
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

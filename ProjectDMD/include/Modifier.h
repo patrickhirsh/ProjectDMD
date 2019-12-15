@@ -55,7 +55,6 @@ public:
     rgb_matrix::Color GetColor      ();
 
 private:
-    // user params
     double                          _startHue;
     double                          _endHue;
     double                          _saturation;
@@ -63,7 +62,35 @@ private:
     double                          _shiftFactor;
     bool                            _pingPong;
 
-    // internal
     std::chrono::high_resolution_clock::time_point _startTime;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////////////////////////
+// LinearInterpolationModifier
+
+class LinearInterpolationModifier
+{
+public:
+    LinearInterpolationModifier();
+        
+    /* Begin a linear interpolation session. GetPoint() will return interpolated points
+    based on the current time. IsActive() will return false when duration has expired. */
+    void Start(
+        std::tuple<int, int> origin,            // linear interpolation start point
+        std::tuple<int, int> destination,       // linear interpolation end point
+        double duration);                       // duration (in seconds) to interpolate between points
+    
+    bool IsActive                   ();
+    std::tuple<int, int> GetPoint   ();
+
+    bool                            _isActive;
+    std::tuple<int, int>            _origin;
+    std::tuple<int, int>            _destination;
+    double                          _duration;
+    
+    std::chrono::high_resolution_clock::time_point  _startTime;
 };
 
