@@ -94,3 +94,33 @@ public:
     std::chrono::high_resolution_clock::time_point  _startTime;
 };
 
+////////////////////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////////////////////////
+// CosineInterpolationModifier
+
+class CosineInterpolationModifier
+{
+public:
+    CosineInterpolationModifier();
+        
+    /* Begin a cosine interpolation session. GetPoint() will return interpolated points
+    based on the current time. IsActive() will return false when duration has expired. */
+    void Start(
+        std::tuple<int, int> origin,            // cosine interpolation start point
+        std::tuple<int, int> destination,       // cosine interpolation end point
+        double duration);                       // duration (in seconds) to interpolate between points
+    
+    bool IsActive                   ();
+    std::tuple<int, int> GetPoint   ();
+
+    bool                            _isActive;
+    std::tuple<int, int>            _origin;
+    std::tuple<int, int>            _destination;
+    double                          _duration;
+    
+    std::chrono::high_resolution_clock::time_point  _startTime;
+};
+
+////////////////////////////////////////////////////////////////////////////////

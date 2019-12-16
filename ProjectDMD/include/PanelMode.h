@@ -71,7 +71,7 @@ protected:
     HueShiftModifier*                   _hueShiftModifier;
     SText*                              _logo;
     rgb_matrix::Color*                  _color;
-    LinearInterpolationModifier*        _linearInterpolationModifier;
+    CosineInterpolationModifier*        _interpolationModifier;
     std::tuple<int, int>                _point1;
     std::tuple<int, int>                _point2;
     bool                                _direction;

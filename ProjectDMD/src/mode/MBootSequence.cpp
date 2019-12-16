@@ -19,9 +19,9 @@ MBootSequence::MBootSequence()
         std::tuple<int, int>(Render::GetDisplayWidth() / 2, ((Render::GetDisplayHeight() / 2) - (ResourceManager::GetFont("StarTrek_20.dmdf")->GetFontHeight() / 2))),
         ResourceManager::GetFont("StarTrek_20.dmdf"));
 
-    _linearInterpolationModifier = new LinearInterpolationModifier();
-    _point1 = std::tuple<int, int>(Render::GetDisplayWidth() / 2 - 50, ((20) - (ResourceManager::GetFont("StarTrek_20.dmdf")->GetFontHeight() / 2)));
-    _point2 = std::tuple<int, int>(Render::GetDisplayWidth() / 2 + 50, ((20) - (ResourceManager::GetFont("StarTrek_20.dmdf")->GetFontHeight() / 2)));
+    _interpolationModifier = new CosineInterpolationModifier();
+    _point1 = std::tuple<int, int>(Render::GetDisplayWidth() / 2 - 50, ((Render::GetDisplayHeight() / 2) - (ResourceManager::GetFont("StarTrek_20.dmdf")->GetFontHeight() / 2)));
+    _point2 = std::tuple<int, int>(Render::GetDisplayWidth() / 2 + 50, ((Render::GetDisplayHeight() / 2) - (ResourceManager::GetFont("StarTrek_20.dmdf")->GetFontHeight() / 2)));
     _direction = true;
 
     //_sources.push_back(rect);
@@ -45,27 +45,27 @@ void MBootSequence::internalUpdate()
     _color = new rgb_matrix::Color(color);
     _logo->SetColor(_color);
 
-    if (_linearInterpolationModifier->IsActive())
+    if (_interpolationModifier->IsActive())
     {
-        _logo->SetOrigin(_linearInterpolationModifier->GetPoint());
+        _logo->SetOrigin(_interpolationModifier->GetPoint());
     }
     else
     {
         if (_direction)
         {
-            _linearInterpolationModifier->Start(
+            _interpolationModifier->Start(
                 _point1,
                 _point2,
-                0.5);
+                1.0);
         }
         else
         {
-            _linearInterpolationModifier->Start(
+            _interpolationModifier->Start(
                 _point2,
                 _point1,
-                0.5);
+                1.0);
         }
-        _logo->SetOrigin(_linearInterpolationModifier->GetPoint());
+        _logo->SetOrigin(_interpolationModifier->GetPoint());
         _direction = !_direction;
     }
 }
