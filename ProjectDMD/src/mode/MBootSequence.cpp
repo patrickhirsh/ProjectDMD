@@ -20,8 +20,8 @@ MBootSequence::MBootSequence()
         ResourceManager::GetFont("StarTrek_20.dmdf"));
 
     _interpolationModifier = new CosineInterpolationModifier();
-    _point1 = std::tuple<int, int>(Render::GetDisplayWidth() / 2 - 50, ((Render::GetDisplayHeight() / 2) - (ResourceManager::GetFont("StarTrek_20.dmdf")->GetFontHeight() / 2)));
-    _point2 = std::tuple<int, int>(Render::GetDisplayWidth() / 2 + 50, ((Render::GetDisplayHeight() / 2) - (ResourceManager::GetFont("StarTrek_20.dmdf")->GetFontHeight() / 2)));
+    _point1 = std::tuple<int, int>(Render::GetDisplayWidth() / 2 - 100, ((Render::GetDisplayHeight() / 2) - (ResourceManager::GetFont("StarTrek_20.dmdf")->GetFontHeight() / 2)));
+    _point2 = std::tuple<int, int>(Render::GetDisplayWidth() / 2 + 100, ((Render::GetDisplayHeight() / 2) - (ResourceManager::GetFont("StarTrek_20.dmdf")->GetFontHeight() / 2)));
     _direction = true;
 
     //_sources.push_back(rect);

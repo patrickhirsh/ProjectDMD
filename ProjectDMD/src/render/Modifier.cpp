@@ -59,6 +59,7 @@ rgb_matrix::Color HueShiftModifier::GetColor()
 
 ////////////////////////////////////////////////////////////////////////////////
 // LinearInterpolationModifier
+// Ref: http://paulbourke.net/miscellaneous/interpolation/
 
 LinearInterpolationModifier::LinearInterpolationModifier()
 {
@@ -113,6 +114,7 @@ std::tuple<int, int> LinearInterpolationModifier::GetPoint()
 
 ////////////////////////////////////////////////////////////////////////////////
 // CosineInterpolationModifier
+// Ref: http://paulbourke.net/miscellaneous/interpolation/
 
 CosineInterpolationModifier::CosineInterpolationModifier()
 {

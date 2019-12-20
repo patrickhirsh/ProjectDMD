@@ -354,9 +354,12 @@ void Render::SetPixel(
     const rgb_matrix::Color*        color
 )
 {
-    _currentFrame[xPos][yPos]->r = color->r;
-    _currentFrame[xPos][yPos]->g = color->g;
-    _currentFrame[xPos][yPos]->b = color->b;
+    if (xPos >= 0 && xPos < GetDisplayWidth() && yPos >= 0 && yPos < GetDisplayHeight())
+    {
+        _currentFrame[xPos][yPos]->r = color->r;
+        _currentFrame[xPos][yPos]->g = color->g;
+        _currentFrame[xPos][yPos]->b = color->b;
+    }
 }
 
 void Render::SetPixel(
@@ -366,10 +369,13 @@ void Render::SetPixel(
     float                           opacity
 )
 {
-    // alpha blending reference: https://en.wikipedia.org/wiki/Alpha_compositing#Alpha_blending
-    _currentFrame[xPos][yPos]->r = (int)(color->r*opacity + _currentFrame[xPos][yPos]->r*(1 - opacity));
-    _currentFrame[xPos][yPos]->g = (int)(color->g*opacity + _currentFrame[xPos][yPos]->g*(1 - opacity));
-    _currentFrame[xPos][yPos]->b = (int)(color->b*opacity + _currentFrame[xPos][yPos]->b*(1 - opacity));
+    if (xPos >= 0 && xPos < GetDisplayWidth() && yPos >= 0 && yPos < GetDisplayHeight())
+    {
+        // alpha blending reference: https://en.wikipedia.org/wiki/Alpha_compositing#Alpha_blending
+        _currentFrame[xPos][yPos]->r = (int)(color->r*opacity + _currentFrame[xPos][yPos]->r*(1 - opacity));
+        _currentFrame[xPos][yPos]->g = (int)(color->g*opacity + _currentFrame[xPos][yPos]->g*(1 - opacity));
+        _currentFrame[xPos][yPos]->b = (int)(color->b*opacity + _currentFrame[xPos][yPos]->b*(1 - opacity));
+    }
 }
 
 std::tuple<int, int> Render::getOriginAfterJustification(
