@@ -6,16 +6,20 @@
 
 /* Statics */
 float Render::_globalBrightness = 1.0f;
+rgb_matrix::Color* Render::_currentFrame[PANEL_WIDTH*PANEL_COUNT_X][PANEL_HEIGHT*PANEL_COUNT_Y];
+
+#if !VIRTUAL
 GPIO* Render::_gpio;
 RGBMatrix* Render::_matrix;
 FrameCanvas* Render::_buffer;
-rgb_matrix::Color* Render::_currentFrame[PANEL_WIDTH*PANEL_COUNT_X][PANEL_HEIGHT*PANEL_COUNT_Y];
+#endif // !VIRTUAL
 
 ////////////////////////////////////////////////////////////////////////////////
 // Render
 
 void Render::Initialize(int argc, char* argv[])
 {
+#if !VIRTUAL
     // define matrix options
     RGBMatrix::Options options;
     options.hardware_mapping = HARDWARE_MAPPING;
@@ -35,29 +39,36 @@ void Render::Initialize(int argc, char* argv[])
 
     // create the buffer
     _buffer = _matrix->CreateFrameCanvas();
+#endif // !VIRTUAL
 
     // create the current frame
-    for (int y = 0; y < _matrix->height(); y++)
-        for (int x = 0; x < _matrix->width(); x++)
+    for (int y = 0; y < GetDisplayHeight(); y++)
+        for (int x = 0; x < GetDisplayWidth(); x++)
             _currentFrame[x][y] = new rgb_matrix::Color(0, 0, 0);
 }
 
 void Render::FinalizeFrame()
 {
+#if !VIRTUAL
     if (_matrix == NULL) { ErrorHandler::Log("Render", "Matrix is null!", ErrorNum::FATAL_INVALID_MATRIX); }
-    for (int y = 0; y < _matrix->height(); y++)
+#endif // !VIRTUAL
+    for (int y = 0; y < GetDisplayHeight(); y++)
     {
-        for (int x = 0; x < _matrix->width(); x++)
+        for (int x = 0; x < GetDisplayWidth(); x++)
         {
+#if !VIRTUAL
 			_buffer->SetPixel(
-				FLIP_HORIZONTAL ? (_matrix->width() - 1) - x : x,
-				FLIP_VERTICAL ? (_matrix->height() - 1) - y : y,
+				FLIP_HORIZONTAL ? (GetDisplayWidth() - 1) - x : x,
+				FLIP_VERTICAL ? (GetDisplayHeight() - 1) - y : y,
 				(int)(_currentFrame[x][y]->r * _globalBrightness),
 				(int)(_currentFrame[x][y]->g * _globalBrightness),
 				(int)(_currentFrame[x][y]->b * _globalBrightness));
+#endif // !VIRTUAL
         }
     }
+#if !VIRTUAL
     _buffer = _matrix->SwapOnVSync(_buffer);
+#endif // !VIRTUAL
     Render::Clear();
 }
 
@@ -90,23 +101,23 @@ void Render::SetGlobalBrightness(float brightness)
 
 int Render::GetDisplayWidth()
 {
-    if (_matrix == NULL) { ErrorHandler::Log("Render", "Matrix is null!", ErrorNum::FATAL_INVALID_MATRIX); return -1; }
-    else { return (_matrix->width()); }
+    return PANEL_WIDTH * PANEL_COUNT_X;
 }
 
 int Render::GetDisplayHeight()
 {
-    if (_matrix == NULL) { ErrorHandler::Log("Render", "Matrix is null!", ErrorNum::FATAL_INVALID_MATRIX); return -1; }
-    else { return (_matrix->height()); }
+    return PANEL_HEIGHT * PANEL_COUNT_Y;
 }
 
 void Render::Clear()
 {
+#if !VIRTUAL
     if (_buffer == NULL) { ErrorHandler::Log("Render", "Buffer is null!", ErrorNum::FATAL_INVALID_BUFFER); }
     _buffer->Clear();
-    for (int y = 0; y < _matrix->height(); y++)
+#endif // !VIRTUAL
+    for (int y = 0; y < GetDisplayHeight(); y++)
     {
-        for (int x = 0; x < _matrix->width(); x++)
+        for (int x = 0; x < GetDisplayWidth(); x++)
         {
             _currentFrame[x][y]->r = 0;
             _currentFrame[x][y]->g = 0;
@@ -125,7 +136,6 @@ void Render::Text(
     int								horizontalSpacing
 )
 {
-    if (_matrix == NULL) { ErrorHandler::Log("Render", "Matrix is null!", ErrorNum::FATAL_INVALID_MATRIX); return; }
     if (opacity > 1.0f) { opacity = 1.0f; }
     if (opacity <= 0.0f) { return; }
     
@@ -307,7 +317,6 @@ void Render::Notification(
     int                             outlineSpacing
 )
 {
-    if (_matrix == NULL) { ErrorHandler::Log("Render", "Matrix is null!", ErrorNum::FATAL_INVALID_MATRIX); return; }
     if (opacity > 1.0f) { opacity = 1.0f; }
     if (opacity <= 0.0f) { return; }
 

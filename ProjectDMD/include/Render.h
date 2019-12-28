@@ -110,10 +110,13 @@ public:
 		float                           opacity);
 
 private:
+    static float                        _globalBrightness;
+
+#if !VIRTUAL
     static GPIO*                        _gpio;
     static RGBMatrix*					_matrix;
     static FrameCanvas*                 _buffer;
-    static float                        _globalBrightness;
+#endif // !VIRTUAL
 
     /* all render calls per-frame mutate this canvas prior to drawing to the panel */
     static rgb_matrix::Color*           _currentFrame[PANEL_WIDTH*PANEL_COUNT_X][PANEL_HEIGHT*PANEL_COUNT_Y];

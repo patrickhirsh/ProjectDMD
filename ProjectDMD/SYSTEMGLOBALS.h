@@ -3,6 +3,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
+
 /* Startup */
 #define SKIP_SPLASH_SCREEN 0
 
@@ -15,6 +16,9 @@
 #define FLIP_HORIZONTAL 1
 #define HARDWARE_MAPPING "regular"
 #define GPIO_SLOWDOWN 3
+
+/* Virtual : Use SFML to virtualize the DMD panel. */
+#define VIRTUAL 1
 
 /* number of horizontal pixels to skip (leave "blank") when rendering 
 text and an unsupported character is parsed. */
