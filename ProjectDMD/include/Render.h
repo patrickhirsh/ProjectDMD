@@ -33,12 +33,13 @@
 #include "../SYSTEMGLOBALS.h"
 #include "Error.h"
 #include "ResourceManager.h"
+#include "RenderVirtual.h"
 
 using namespace rgb_matrix;
 
-/* Resource forward declaration */
 class DMDF;
 class DMDFC;
+class RenderVirtual;
 
 class Render
 {
@@ -116,7 +117,9 @@ private:
     static GPIO*                        _gpio;
     static RGBMatrix*					_matrix;
     static FrameCanvas*                 _buffer;
-#endif // !VIRTUAL
+#else
+    static RenderVirtual*               _virtualDisplay;
+#endif
 
     /* all render calls per-frame mutate this canvas prior to drawing to the panel */
     static rgb_matrix::Color*           _currentFrame[PANEL_WIDTH*PANEL_COUNT_X][PANEL_HEIGHT*PANEL_COUNT_Y];

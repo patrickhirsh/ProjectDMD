@@ -12,7 +12,9 @@ rgb_matrix::Color* Render::_currentFrame[PANEL_WIDTH*PANEL_COUNT_X][PANEL_HEIGHT
 GPIO* Render::_gpio;
 RGBMatrix* Render::_matrix;
 FrameCanvas* Render::_buffer;
-#endif // !VIRTUAL
+#else
+RenderVirtual* Render::_virtualDisplay;
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 // Render
@@ -39,7 +41,10 @@ void Render::Initialize(int argc, char* argv[])
 
     // create the buffer
     _buffer = _matrix->CreateFrameCanvas();
-#endif // !VIRTUAL
+
+#else // VIRTUAL
+    _virtualDisplay = new RenderVirtual(VIRTUAL_SCALE_FACTOR, FLIP_HORIZONTAL, FLIP_VERTICAL);
+#endif
 
     // create the current frame
     for (int y = 0; y < GetDisplayHeight(); y++)
@@ -51,24 +56,22 @@ void Render::FinalizeFrame()
 {
 #if !VIRTUAL
     if (_matrix == NULL) { ErrorHandler::Log("Render", "Matrix is null!", ErrorNum::FATAL_INVALID_MATRIX); }
-#endif // !VIRTUAL
     for (int y = 0; y < GetDisplayHeight(); y++)
     {
         for (int x = 0; x < GetDisplayWidth(); x++)
         {
-#if !VIRTUAL
 			_buffer->SetPixel(
 				FLIP_HORIZONTAL ? (GetDisplayWidth() - 1) - x : x,
 				FLIP_VERTICAL ? (GetDisplayHeight() - 1) - y : y,
 				(int)(_currentFrame[x][y]->r * _globalBrightness),
 				(int)(_currentFrame[x][y]->g * _globalBrightness),
 				(int)(_currentFrame[x][y]->b * _globalBrightness));
-#endif // !VIRTUAL
         }
     }
-#if !VIRTUAL
     _buffer = _matrix->SwapOnVSync(_buffer);
-#endif // !VIRTUAL
+#else
+    _virtualDisplay->FinalizeFrame(_currentFrame);
+#endif
     Render::Clear();
 }
 

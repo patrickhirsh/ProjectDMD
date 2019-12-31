@@ -2,6 +2,9 @@
 # VARIABLES
 ######################################################################
 
+# Build Options
+BUILD_OPTIONS+=-DVIRTUAL=1
+
 # Compile
 CXXFLAGS = -Wall -O3 -g
 
@@ -22,7 +25,7 @@ OBJ := $(subst .cpp,.o,$(TMP))
 MD = mkdir -p
 CD = cd
 
-# LIB FILES
+# RGB-MATRIX LIB
 RGB_LIB_DISTRIBUTION=lib/rpi-rgb-led-matrix
 RGB_INCDIR=$(RGB_LIB_DISTRIBUTION)/include
 RGB_LIBDIR=$(RGB_LIB_DISTRIBUTION)/lib
@@ -30,16 +33,25 @@ RGB_LIBRARY_NAME=rgbmatrix
 RGB_LIBRARY=$(RGB_LIBDIR)/lib$(RGB_LIBRARY_NAME).a
 LDFLAGS+=-L$(RGB_LIBDIR) -l$(RGB_LIBRARY_NAME) -lrt -lm -lpthread
 
+# SFML LIB
+SFML_FLAGS=-lsfml-graphics -lsfml-window -lsfml-system
+
 
 ######################################################################
 # TARGETS
 ######################################################################
 
-ProjectDMD: init clean $(OBJ) $(HDR) $(RGB_LIBRARY)
-	$(CXX) $(CXXFLAGS) $(OBJ) -o ProjectDMD $(LDFLAGS)
+# PRIMARY BUILD TARGET
+ProjectDMD: clean init $(OBJ) $(HDR) $(RGB_LIBRARY)
+	$(CXX) $(CXXFLAGS) $(OBJ) -o ProjectDMD $(LDFLAGS) $(SFML_FLAGS)
+
+######################################################################
 
 $(RGB_LIBRARY):
 	$(MAKE) -C $(RGB_LIBDIR)
+
+install:
+	sudo apt-get install libsfml-dev
 
 init:
 	${MD} obj
@@ -54,19 +66,14 @@ clean:
 	rm -f $(OBJ) ProjectDMD
 
 run:
-	sudo ./ProjectDMD --led-slowdown-gpio=3
-
-run-debug:
-	sudo ./ProjectDMD --led-show-refresh --led-slowdown-gpio=3
-
+	sudo ./ProjectDMD
 
 ######################################################################
 # PATTERNS
 ######################################################################
 
 obj/%.o: src/%.cpp
-	$(CXX) -c $(CXXFLAGS) $< -o $@
-
+	$(CXX) -c $(CXXFLAGS) $(BUILD_OPTIONS) $< -o $@
 
 ######################################################################
-.PHONY: init, clean, run, run-debug
+.PHONY: install, init, clean, run
