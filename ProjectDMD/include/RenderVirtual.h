@@ -16,26 +16,26 @@
 // Local
 #include "Error.h"
 
+#if VIRTUAL
+/* Generates, manages, and updates a virtual display using SFML,
+designed to be used for remote development. This class is used when
+VIRTUAL is enabled. */
 class RenderVirtual
 {
 public:
-    RenderVirtual(
-        float                           scaleFactor, 
-        bool                            flipHorizontal, 
-        bool                            flipVertical);
+    RenderVirtual                       (float scaleFactor);
+    ~RenderVirtual                      ();
 
+    void                                Poll();
     void                                Clear();
     void                                FinalizeFrame(rgb_matrix::Color* currentFrame[PANEL_WIDTH*PANEL_COUNT_X][PANEL_HEIGHT*PANEL_COUNT_Y]);
 
 private:
     sf::RenderWindow*                   _window;
-    sf::Image*                          _frame;
+    sf::Image*                          _image;
     sf::Texture*                        _texture;
     sf::Sprite*                         _sprite;
     uint8_t                             _buffer[PANEL_WIDTH*PANEL_COUNT_X*VIRTUAL_SCALE_FACTOR*PANEL_HEIGHT*PANEL_COUNT_Y*VIRTUAL_SCALE_FACTOR*4];
-    int                                 _virtualWidth;
-    int                                 _virtualHeight; 
-    float                               _scaleFactor;
-    bool                                _flipHorizontal;      
-    bool                                _flipVertical;
+    float                               _scaleFactor;       // factor by which we should scale the DMD display resolution
 };
+#endif // VIRTUAL

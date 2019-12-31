@@ -18,7 +18,6 @@ static void InterruptHandler(int signo)
     interrupt_received = true;
 }
 
-
 int PanelManager::Run(int argc, char* argv[])
 {
     printf("\n\nrunning...\n\n");
@@ -34,6 +33,11 @@ int PanelManager::Run(int argc, char* argv[])
     // panel refresh loop
     while (!interrupt_received)
     {
+#if VIRTUAL
+        // poll for events in the virtual window
+        Render::PollVirtual();
+#endif
+
         // refresh the current mode (renders to current frame)
         _panelModes[_currentMode]->Update();
 

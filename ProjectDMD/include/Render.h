@@ -109,6 +109,9 @@ public:
 		int                             yPos,
 		const rgb_matrix::Color*        color,
 		float                           opacity);
+#if VIRTUAL
+    static void                         PollVirtual();
+#endif // !VIRTUAL
 
 private:
     static float                        _globalBrightness;

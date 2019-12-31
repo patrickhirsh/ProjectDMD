@@ -43,7 +43,7 @@ void Render::Initialize(int argc, char* argv[])
     _buffer = _matrix->CreateFrameCanvas();
 
 #else // VIRTUAL
-    _virtualDisplay = new RenderVirtual(VIRTUAL_SCALE_FACTOR, FLIP_HORIZONTAL, FLIP_VERTICAL);
+    _virtualDisplay = new RenderVirtual(VIRTUAL_SCALE_FACTOR);
 #endif
 
     // create the current frame
@@ -69,7 +69,7 @@ void Render::FinalizeFrame()
         }
     }
     _buffer = _matrix->SwapOnVSync(_buffer);
-#else
+#else // VIRTUAL
     _virtualDisplay->FinalizeFrame(_currentFrame);
 #endif
     Render::Clear();
@@ -434,5 +434,12 @@ int Render::getTextWidth(
     }
     return (totalWidth + ((text.length() - 1)*horizontalSpacing));
 }
+
+#if VIRTUAL
+void Render::PollVirtual()
+{
+    _virtualDisplay->Poll();
+}
+#endif // !VIRTUAL
 
 ////////////////////////////////////////////////////////////////////////////////
