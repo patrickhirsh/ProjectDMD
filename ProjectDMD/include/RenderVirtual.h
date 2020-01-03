@@ -3,7 +3,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
+#if VIRTUAL
 #include <SFML/Graphics.hpp>
+#endif
 #include <vector>
 
 /* RGB Matrix Library */

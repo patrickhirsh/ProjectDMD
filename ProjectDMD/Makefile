@@ -1,9 +1,10 @@
 ######################################################################
 # VARIABLES
 ######################################################################
+VIRTUAL=0
 
 # Build Options
-BUILD_OPTIONS+=-DVIRTUAL=1
+BUILD_OPTIONS+=-DVIRTUAL=$(VIRTUAL)
 
 # Compile
 CXXFLAGS = -Wall -O3 -g
@@ -34,8 +35,9 @@ RGB_LIBRARY=$(RGB_LIBDIR)/lib$(RGB_LIBRARY_NAME).a
 LDFLAGS+=-L$(RGB_LIBDIR) -l$(RGB_LIBRARY_NAME) -lrt -lm -lpthread
 
 # SFML LIB
-SFML_FLAGS=-lsfml-graphics -lsfml-window -lsfml-system
-
+ifeq ($(VIRTUAL),1)
+SFML_FLAGS+=-lsfml-graphics -lsfml-window -lsfml-system
+endif
 
 ######################################################################
 # TARGETS

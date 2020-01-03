@@ -123,6 +123,38 @@ public:
 
 
 ////////////////////////////////////////////////////////////////////////////////
+// DMDAnimation
+
+/* Represents a special kind of animation that utilizes 0-15 pixel intensity in mono
+colorspace. These fonts are generated with the PinExporter tool and packaged
+to be as small on disk/in memory as possible */
+class DMDA
+{
+public:
+    /* Create a new DMDA based on a .dmda file */
+    DMDA(std::string file);
+    DMDA(const DMDA* animationToCopy);
+
+    const int GetFrameCount                                 () const;
+    const std::tuple<int, int> GetDimensions                () const;                 
+    const DMDFC* GetFrame                                   (int index) const;
+    const std::string GetName                               () const;
+
+    bool IsLoaded() const;
+    bool Load();
+    bool Unload();
+
+private:
+    bool _loaded;
+    std::vector<std::vector<std::vector<unsigned char>>*>*	_frames;
+    std::vector<int, int>									_dimensions;
+    std::string												_name;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////////////////////////
 // DMDColor
 
 /* For use with DMDObjects utilizing the 255 + 0-15 color space. Allows a color palette
