@@ -11,7 +11,7 @@ public:
 	{
 
 	}
-}
+};
 
 Ember::Application* Ember::CreateApplication()
 {

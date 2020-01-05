@@ -1,68 +1,47 @@
 ######################################################################
 # VARIABLES
 ######################################################################
-VIRTUAL=0
-
-# Build Options
-BUILD_OPTIONS+=-DVIRTUAL=$(VIRTUAL)
 
 # Compile
 CXXFLAGS = -Wall -O3 -g
 
-# Project Files
-SRC_BASE = $(wildcard src/*.cpp)
-SRC_RESOURCE = $(wildcard src/resource/*.cpp)
-SRC_SOURCES = $(wildcard src/source/*.cpp)
-SRC_UTILITY = $(wildcard src/utility/*.cpp)
-SRC_OBJECT = $(wildcard src/object/*.cpp)
-SRC_RENDER = $(wildcard src/render/*.cpp)
-SRC_MODE = $(wildcard src/mode/*.cpp)
-HDR = $(wildcard include/*.h) SYSTEMGLOBALS.h
-SRC = $(SRC_BASE) $(SRC_SOURCES) $(SRC_UTILITY) $(SRC_RESOURCE) $(SRC_OBJECT) $(SRC_RENDER) $(SRC_MODE)
-TMP := $(subst src/,obj/,$(SRC))
+# CPP Project Files
+CPP_BASE = $(wildcard src/*.cpp)
+
+# HDR Project Files
+HDR_BASE = $(wildcard src/*.h)
+
+# Composition
+CPP = $(CPP_BASE)
+HDR = $(HDR_BASE)
+TMP := $(subst src/,obj/,$(CPP))
 OBJ := $(subst .cpp,.o,$(TMP))
 
-# Directory Management
+# CMD Util
 MD = mkdir -p
-CD = cd
 
-# RGB-MATRIX LIB
-RGB_LIB_DISTRIBUTION=lib/rpi-rgb-led-matrix
-RGB_INCDIR=$(RGB_LIB_DISTRIBUTION)/include
-RGB_LIBDIR=$(RGB_LIB_DISTRIBUTION)/lib
-RGB_LIBRARY_NAME=rgbmatrix
-RGB_LIBRARY=$(RGB_LIBDIR)/lib$(RGB_LIBRARY_NAME).a
-LDFLAGS+=-L$(RGB_LIBDIR) -l$(RGB_LIBRARY_NAME) -lrt -lm -lpthread
-
-# SFML LIB
-ifeq ($(VIRTUAL),1)
-SFML_FLAGS+=-lsfml-graphics -lsfml-window -lsfml-system
-endif
+# EMBER
+EMBER_DIR = ../Ember
+EMBER_LIB_NAME = Ember
+EMBER = lib$(EMBER_PATH).a
+EMBER_FLAGS += -L$(EMBER_DIR) -l$(EMBER_LIB_NAME)
 
 ######################################################################
 # TARGETS
 ######################################################################
 
 # PRIMARY BUILD TARGET
-ProjectDMD: clean init $(OBJ) $(HDR) $(RGB_LIBRARY)
-	$(CXX) $(CXXFLAGS) $(OBJ) -o ProjectDMD $(LDFLAGS) $(SFML_FLAGS)
+ProjectDMD: clean init $(OBJ) $(HDR) $(EMBER)
+	$(CXX) $(CXXFLAGS) $(OBJ) -o ProjectDMD $(EMBER_FLAGS)
 
 ######################################################################
 
-$(RGB_LIBRARY):
-	$(MAKE) -C $(RGB_LIBDIR)
-
-install:
-	sudo apt-get install libsfml-dev
+$(EMBER):
+	$(MAKE) -C $(EMBER_DIR)
 
 init:
 	${MD} obj
-	${MD} obj/resource
-	${MD} obj/source
-	${MD} obj/utility
-	${MD} obj/object
-	${MD} obj/render
-	${MD} obj/mode
+	${MD} obj/src
 
 clean:
 	rm -f $(OBJ) ProjectDMD
@@ -75,7 +54,7 @@ run:
 ######################################################################
 
 obj/%.o: src/%.cpp
-	$(CXX) -c $(CXXFLAGS) $(BUILD_OPTIONS) $< -o $@
+	$(CXX) -c $(CXXFLAGS) $< -o $@
 
 ######################################################################
-.PHONY: install, init, clean, run
+.PHONY: init, clean, run
