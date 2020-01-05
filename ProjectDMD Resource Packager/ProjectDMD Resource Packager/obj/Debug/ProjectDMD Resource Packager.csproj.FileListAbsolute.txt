@@ -1,7 +1,0 @@
-C:\Users\Patrick\Desktop\Projects\ProjectDMD Resource Packager\ProjectDMD Resource Packager\bin\Debug\ProjectDMD Resource Packager.exe.config
-C:\Users\Patrick\Desktop\Projects\ProjectDMD Resource Packager\ProjectDMD Resource Packager\bin\Debug\ProjectDMD Resource Packager.exe
-C:\Users\Patrick\Desktop\Projects\ProjectDMD Resource Packager\ProjectDMD Resource Packager\bin\Debug\ProjectDMD Resource Packager.pdb
-C:\Users\Patrick\Desktop\Projects\ProjectDMD Resource Packager\ProjectDMD Resource Packager\obj\Debug\ProjectDMD Resource Packager.csprojAssemblyReference.cache
-C:\Users\Patrick\Desktop\Projects\ProjectDMD Resource Packager\ProjectDMD Resource Packager\obj\Debug\ProjectDMD Resource Packager.csproj.CoreCompileInputs.cache
-C:\Users\Patrick\Desktop\Projects\ProjectDMD Resource Packager\ProjectDMD Resource Packager\obj\Debug\ProjectDMD Resource Packager.exe
-C:\Users\Patrick\Desktop\Projects\ProjectDMD Resource Packager\ProjectDMD Resource Packager\obj\Debug\ProjectDMD Resource Packager.pdb
