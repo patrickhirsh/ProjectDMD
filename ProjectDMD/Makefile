@@ -1,3 +1,6 @@
+## -------------------------- PROJECTDMD -------------------------- ##
+include ../Ember/Makefile.BuildOptions
+
 ######################################################################
 # VARIABLES
 ######################################################################
@@ -20,11 +23,17 @@ OBJ := $(subst .cpp,.o,$(TMP))
 # CMD Util
 MD = mkdir -p
 
+# SFML
+ifeq ($(VIRTUAL),1)
+SFML_FLAGS+=-lsfml-graphics -lsfml-window -lsfml-system
+endif
+
 # EMBER
 EMBER_DIR = ../Ember
 EMBER_LIB_NAME = Ember
 EMBER = lib$(EMBER_PATH).a
-EMBER_FLAGS += -L$(EMBER_DIR) -l$(EMBER_LIB_NAME)
+EMBER_DEP_FLAGS += -lrt -lm -lpthread $(SFML_FLAGS)
+EMBER_FLAGS += -L$(EMBER_DIR) -l$(EMBER_LIB_NAME) $(EMBER_DEP_FLAGS)
 
 ######################################################################
 # TARGETS
