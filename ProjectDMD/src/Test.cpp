@@ -1,4 +1,4 @@
-#include "../../Ember/src/Ember.h"
+#include "Ember.h"
 
 class Test : public Ember::Application
 {

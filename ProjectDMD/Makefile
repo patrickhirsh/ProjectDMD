@@ -29,24 +29,24 @@ SFML_FLAGS+=-lsfml-graphics -lsfml-window -lsfml-system
 endif
 
 # EMBER
-EMBER_DIR = ../Ember
-EMBER_LIB_NAME = Ember
-EMBER = lib$(EMBER_PATH).a
+EMBER_LIBDIR = ../Ember
+EMBER_LIBRARY = $(EMBER_LIBDIR)/libEmber.a
 EMBER_DEP_FLAGS += -lrt -lm -lpthread $(SFML_FLAGS)
-EMBER_FLAGS += -L$(EMBER_DIR) -l$(EMBER_LIB_NAME) $(EMBER_DEP_FLAGS)
+EMBER_INCLUDE_FLAGS = -I$(EMBER_LIBDIR)/src -I$(EMBER_LIBDIR)/src/Include
+EMBER_FLAGS += -L$(EMBER_LIBDIR) -lEmber $(EMBER_DEP_FLAGS) $(EMBER_INCLUDE_FLAGS)
 
 ######################################################################
 # TARGETS
 ######################################################################
 
 # PRIMARY BUILD TARGET
-ProjectDMD: clean init $(OBJ) $(HDR) $(EMBER)
+ProjectDMD: clean init $(EMBER_LIBRARY) $(OBJ) $(HDR)
 	$(CXX) $(CXXFLAGS) $(OBJ) -o ProjectDMD $(EMBER_FLAGS)
 
 ######################################################################
 
-$(EMBER):
-	$(MAKE) -C $(EMBER_DIR)
+$(EMBER_LIBRARY):
+	$(MAKE) -C $(EMBER_LIBDIR)
 
 init:
 	${MD} obj
@@ -63,7 +63,7 @@ run:
 ######################################################################
 
 obj/%.o: src/%.cpp
-	$(CXX) -c $(CXXFLAGS) $< -o $@
+	$(CXX) -c $(CXXFLAGS) $< -o $@ $(EMBER_INCLUDE_FLAGS)
 
 ######################################################################
 .PHONY: init, clean, run
