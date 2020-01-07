@@ -40,13 +40,13 @@ EMBER_FLAGS += -L$(EMBER_LIBDIR) -lEmber $(EMBER_DEP_FLAGS) $(EMBER_INCLUDE_FLAG
 ######################################################################
 
 # PRIMARY BUILD TARGET
-ProjectDMD: clean init $(EMBER_LIBRARY) $(OBJ) $(HDR)
+ProjectDMD: clean init Ember $(OBJ) $(HDR)
 	$(CXX) $(CXXFLAGS) $(OBJ) -o ProjectDMD $(EMBER_FLAGS)
 
 ######################################################################
 
-$(EMBER_LIBRARY):
-	$(MAKE) -C $(EMBER_LIBDIR)
+Ember:
+	cd $(EMBER_LIBDIR) && $(MAKE)
 
 init:
 	${MD} obj
