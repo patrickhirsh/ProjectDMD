@@ -17,7 +17,10 @@ public:
 
 	void Tick()
 	{
-
+		for (auto object : *activeObjects)
+		{
+			object->Draw();
+		}
 	}
 
 	void OnEvent()
@@ -26,7 +29,12 @@ public:
 	}
 };
 
-Ember::Application* Ember::CreateApplication()
+Ember::ApplicationToken Ember::CreateApplication()
 {
-	return new Sandbox();
+	auto instance = new Sandbox();
+	return ApplicationToken(
+		instance,
+		Options(),
+		std::bind(&Sandbox::Tick, instance),
+		std::bind(&Sandbox::OnEvent, instance));
 }
