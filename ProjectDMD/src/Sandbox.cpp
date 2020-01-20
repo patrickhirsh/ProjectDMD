@@ -17,10 +17,12 @@ public:
 
 	void Tick()
 	{
+		/*
 		for (auto object : *activeObjects)
 		{
-			object->Draw();
+			//object->Draw();
 		}
+		*/
 	}
 
 	void OnEvent()

@@ -32,7 +32,7 @@ endif
 EMBER_LIBDIR = ../Ember
 EMBER_LIBRARY = $(EMBER_LIBDIR)/libEmber.a
 EMBER_DEP_FLAGS += -lrt -lm -lpthread $(SFML_FLAGS)
-EMBER_INCLUDE_FLAGS = -I$(EMBER_LIBDIR)/src -I$(EMBER_LIBDIR)/src/Include
+EMBER_INCLUDE_FLAGS = -I$(EMBER_LIBDIR)/src -I$(EMBER_LIBDIR)/src/Ember/Include/Core -I$(EMBER_LIBDIR)/src/Ember/Include/Data -I$(EMBER_LIBDIR)/src/Ember/Include/Utility
 EMBER_FLAGS += -L$(EMBER_LIBDIR) -lEmber $(EMBER_DEP_FLAGS) $(EMBER_INCLUDE_FLAGS)
 
 ######################################################################
